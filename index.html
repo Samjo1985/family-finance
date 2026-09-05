@@ -2,155 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Family Finance Manager</title>
+
+<title>Sam's Family Finance Dashboard</title>
 
 <style>
 :root{
-  --bg:#f4f7fb;
-  --card:#fff;
-  --card2:#f8fafc;
-  --text:#172033;
-  --muted:#64748b;
-  --border:#e5eaf2;
-  --navy:#0f172a;
-  --blue:#2563eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --orange:#f59e0b;
-  --purple:#7c3aed;
-  --teal:#0f766e;
-  --shadow:0 12px 35px rgba(15,23,42,.08);
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#e5eaf2;
+
+    --navy:#0f172a;
+    --green:#16a34a;
+    --blue:#2563eb;
+    --orange:#f59e0b;
+    --red:#dc2626;
+    --purple:#7c3aed;
 }
 
-[data-theme="dark"]{
-  --bg:#0b1120;
-  --card:#111827;
-  --card2:#172033;
-  --text:#f1f5f9;
-  --muted:#94a3b8;
-  --border:#263247;
-  --navy:#020617;
-  --shadow:0 12px 35px rgba(0,0,0,.25);
+*{
+    box-sizing:border-box;
 }
-
-*{box-sizing:border-box}
-
-html{scroll-behavior:smooth}
 
 body{
-  margin:0;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+    margin:0;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    background:var(--bg);
+    color:var(--text);
 }
 
-button,input,select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
+/* HERO */
 
 .hero{
-  background:
-    radial-gradient(circle at 90% 20%,rgba(45,212,191,.25),transparent 35%),
-    linear-gradient(135deg,#0f172a,#173b63 55%,#075e54);
-  color:white;
-  padding:28px 16px 85px;
+    background:
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(45,212,191,.25),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #0f172a,
+            #173b63 55%,
+            #075e54
+        );
+
+    color:white;
+    padding:30px 16px 85px;
 }
 
 .hero-inner{
-  max-width:1250px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-}
+    max-width:1180px;
+    margin:auto;
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
 }
 
 .logo{
-  width:58px;
-  height:58px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  background:rgba(255,255,255,.12);
-  font-size:29px;
+    width:56px;
+    height:56px;
+    border-radius:17px;
+
+    display:grid;
+    place-items:center;
+
+    background:rgba(255,255,255,.12);
+
+    font-size:28px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
 }
 
 h1{
-  margin:0;
-  font-size:clamp(26px,4vw,40px);
+    margin:0;
+    font-size:clamp(26px,4vw,40px);
 }
 
 .subtitle{
-  margin-top:6px;
-  color:#dbeafe;
+    margin-top:6px;
+    color:#dbeafe;
 }
 
-.hero-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
+.currency{
+    padding:10px 15px;
+    border-radius:999px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.15);
+    font-size:13px;
 }
 
-.hero-btn{
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.1);
-  color:white;
-  border-radius:12px;
-  padding:10px 13px;
-}
+/* MAIN */
 
 main{
-  max-width:1250px;
-  margin:-50px auto 60px;
-  padding:0 15px;
+    max-width:1180px;
+    margin:-50px auto 60px;
+    padding:0 15px;
 }
+
+/* SUMMARY */
 
 .cards{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:14px;
-}
-
-.card,.panel{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:22px;
-  box-shadow:var(--shadow);
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
 .card{
-  padding:19px;
-}
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:20px;
 
-.panel{
-  padding:21px;
-  margin-top:18px;
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.08);
 }
 
 .label{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:.55px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.5px;
 }
 
 .value{
-  margin-top:7px;
-  font-size:24px;
-  font-weight:850;
+    margin-top:7px;
+    font-size:25px;
+    font-weight:850;
 }
 
 .blue{color:var(--blue)}
@@ -158,500 +152,486 @@ main{
 .red{color:var(--red)}
 .orange{color:var(--orange)}
 .purple{color:var(--purple)}
-.teal{color:var(--teal)}
+
+/* GRID */
 
 .grid{
-  display:grid;
-  grid-template-columns:1.25fr .75fr;
-  gap:18px;
+    display:grid;
+    grid-template-columns:1.25fr .75fr;
+    gap:18px;
+    margin-top:18px;
+}
+
+.panel{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:21px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.08);
 }
 
 .panel h2{
-  margin:0 0 16px;
-  font-size:20px;
+    margin:0 0 16px;
+    font-size:20px;
 }
 
-.toolbar{
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin-bottom:15px;
+/* CONTROLS */
+
+.controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
 }
 
-input,select{
-  min-height:42px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:9px 11px;
-  background:var(--card);
-  color:var(--text);
-  outline:none;
+select,
+input{
+    font:inherit;
+
+    border:1px solid var(--border);
+    border-radius:12px;
+
+    padding:10px 12px;
+
+    background:white;
+    color:var(--text);
+
+    outline:none;
 }
 
-input:focus,select:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+select{
+    min-width:210px;
+}
+
+input:focus,
+select:focus{
+    border-color:var(--blue);
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.10);
 }
 
 button{
-  border:0;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:750;
+    border:0;
+    border-radius:12px;
+
+    padding:10px 15px;
+
+    cursor:pointer;
+
+    font:inherit;
+    font-weight:750;
 }
 
 .primary{
-  background:var(--navy);
-  color:white;
+    background:var(--navy);
+    color:white;
 }
 
 .soft{
-  background:#dbeafe;
-  color:#1d4ed8;
+    background:#dbeafe;
+    color:#1d4ed8;
 }
 
-.green-btn{
-  background:#dcfce7;
-  color:#166534;
+/* EXPENSE ROWS */
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 150px;
+
+    gap:12px;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid var(--border);
 }
 
-.red-btn{
-  background:#fee2e2;
-  color:#991b1b;
+.row:last-child{
+    border-bottom:none;
 }
 
-.dark-btn{
-  background:#334155;
-  color:white;
+.row-title{
+    font-weight:700;
 }
 
-.transaction-form{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:9px;
-  padding:15px;
-  background:var(--card2);
-  border:1px solid var(--border);
-  border-radius:18px;
-  margin-bottom:18px;
+.description{
+    display:block;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    margin-top:3px;
 }
 
-.transaction-form input,
-.transaction-form select{
-  width:100%;
+.row input{
+    width:100%;
+    text-align:right;
+    font-weight:700;
 }
 
-.transaction-form .wide{
-  grid-column:span 2;
-}
-
-.transaction-form button{
-  min-height:42px;
-}
-
-.type-toggle{
-  display:flex;
-  gap:5px;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:4px;
-}
-
-.type-toggle button{
-  flex:1;
-  padding:7px 9px;
-}
-
-.type-toggle .active-debit{
-  background:#fee2e2;
-  color:#b91c1c;
-}
-
-.type-toggle .active-credit{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  padding:11px;
-  border-bottom:1px solid var(--border);
-  text-align:right;
-  white-space:nowrap;
-}
-
-th:first-child,td:first-child{
-  text-align:left;
-}
-
-th{
-  color:var(--muted);
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.badge{
-  display:inline-flex;
-  padding:5px 8px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:800;
-}
-
-.badge-debit{
-  background:#fee2e2;
-  color:#991b1b;
-}
-
-.badge-credit{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.badge-category{
-  background:#e0e7ff;
-  color:#3730a3;
-}
-
-.action-btn{
-  padding:6px 8px;
-  font-size:11px;
-}
-
-.category-table td:first-child{
-  font-weight:750;
-}
-
-.progress{
-  height:10px;
-  background:#e5e7eb;
-  border-radius:30px;
-  overflow:hidden;
-  margin:8px 0 4px;
-}
-
-.progress-bar{
-  height:100%;
-  width:0;
-  border-radius:30px;
-  background:linear-gradient(90deg,#2563eb,#22c55e);
-  transition:.3s;
-}
-
-.progress-red{
-  background:linear-gradient(90deg,#f97316,#dc2626);
-}
-
-.progress-green{
-  background:linear-gradient(90deg,#16a34a,#22c55e);
-}
+/* SAVINGS */
 
 .stats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
 }
 
 .mini{
-  padding:15px;
-  background:var(--card2);
-  border:1px solid var(--border);
-  border-radius:17px;
+    background:#f8fafc;
+
+    border:1px solid var(--border);
+
+    padding:15px;
+
+    border-radius:17px;
 }
 
 .mini strong{
-  display:block;
-  font-size:20px;
-  margin-top:5px;
+    display:block;
+
+    font-size:20px;
+
+    margin-top:5px;
+}
+
+.progress{
+    height:12px;
+
+    background:#edf2f7;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin:11px 0 6px;
+}
+
+.progress-bar{
+    height:100%;
+
+    width:0%;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #16a34a,
+            #22c55e
+        );
+
+    transition:.4s;
 }
 
 .health{
-  margin-top:15px;
-  padding:16px;
-  border-radius:17px;
-  background:var(--card2);
-  border:1px solid var(--border);
+    margin-top:15px;
+
+    padding:16px;
+
+    border-radius:17px;
+
+    background:#f8fafc;
+
+    border:1px solid var(--border);
 }
 
 .health-status{
-  font-size:20px;
-  font-weight:850;
-  margin-top:5px;
+    font-size:20px;
+
+    font-weight:850;
+
+    margin-top:5px;
 }
 
 .note{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.55;
+    color:var(--muted);
+
+    font-size:13px;
+
+    line-height:1.55;
 }
 
-.chart-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-}
-
-.chart-box{
-  position:relative;
-  height:330px;
-}
-
-.chart-box canvas{
-  width:100%!important;
-  height:100%!important;
-}
+/* LOANS */
 
 .loan-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:15px;
 }
 
 .loan-card{
-  padding:18px;
-  border-radius:18px;
-  background:var(--card2);
-  border:1px solid var(--border);
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    border:1px solid var(--border);
 }
 
 .loan-card h3{
-  margin:0 0 12px;
+    margin:0 0 12px;
 }
 
 .loan-number{
-  font-size:23px;
-  font-weight:850;
+    font-size:23px;
+
+    font-weight:850;
 }
 
 .loan-info{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.65;
+    margin-top:6px;
+
+    color:var(--muted);
+
+    font-size:13px;
+
+    line-height:1.6;
 }
 
 .loan-progress{
-  height:9px;
-  background:#e5e7eb;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:12px;
+    height:9px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:12px;
 }
 
 .loan-progress-bar{
-  height:100%;
-  background:#2563eb;
+    height:100%;
+
+    background:#2563eb;
+
+    width:50%;
 }
 
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.65);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  z-index:1000;
+/* TIMELINE */
+
+.timeline{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
 }
 
-.modal.show{
-  display:flex;
+.milestone{
+    padding:17px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    border:1px solid var(--border);
 }
 
-.modal-card{
-  width:min(650px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:var(--card);
-  border-radius:22px;
-  padding:22px;
-  box-shadow:0 30px 80px rgba(0,0,0,.3);
+.milestone-date{
+    font-weight:800;
 }
 
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
+.milestone-description{
+    color:var(--muted);
+
+    font-size:13px;
+
+    margin-top:6px;
 }
 
-.close{
-  background:var(--card2);
-  color:var(--text);
+.milestone-value{
+    margin-top:10px;
+
+    color:var(--green);
+
+    font-size:20px;
+
+    font-weight:850;
 }
 
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+/* TABLE */
+
+.table-wrap{
+    overflow-x:auto;
 }
 
-.form-group{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
+.month-table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:850px;
 }
 
-.form-group.full{
-  grid-column:1/-1;
+.month-table th,
+.month-table td{
+    padding:12px;
+
+    border-bottom:1px solid var(--border);
+
+    text-align:right;
+
+    white-space:nowrap;
 }
 
-.form-group label{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:750;
+.month-table th:first-child,
+.month-table td:first-child{
+    text-align:left;
 }
 
-.empty{
-  padding:30px;
-  text-align:center;
-  color:var(--muted);
+.month-table th{
+    color:var(--muted);
+
+    font-size:11px;
+
+    text-transform:uppercase;
+}
+
+/* LEGEND */
+
+.legend{
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    margin-top:15px;
+}
+
+.legend span{
+    padding:7px 10px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.debt{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.family{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.essential{
+    background:#fef9c3;
+    color:#854d0e;
+}
+
+.future{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.lifestyle{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.buffer{
+    background:#ede9fe;
+    color:#6d28d9;
 }
 
 footer{
-  text-align:center;
-  color:var(--muted);
-  font-size:12px;
-  padding:25px;
+    text-align:center;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    padding:25px;
 }
 
-@media(max-width:1050px){
-  .cards{
-    grid-template-columns:repeat(3,1fr);
-  }
+/* RESPONSIVE */
 
-  .transaction-form{
-    grid-template-columns:repeat(3,1fr);
-  }
+@media(max-width:900px){
 
-  .transaction-form .wide{
-    grid-column:span 1;
-  }
+    .cards{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .timeline{
+        grid-template-columns:1fr;
+    }
+
+    .loan-grid{
+        grid-template-columns:1fr;
+    }
 }
 
-@media(max-width:800px){
-  .hero-inner{
-    align-items:flex-start;
-    flex-direction:column;
-  }
+@media(max-width:560px){
 
-  .hero-actions{
-    justify-content:flex-start;
-  }
+    .hero{
+        padding:25px 14px 75px;
+    }
 
-  .cards{
-    grid-template-columns:repeat(2,1fr);
-  }
+    .currency{
+        display:none;
+    }
 
-  .grid,.chart-grid{
-    grid-template-columns:1fr;
-  }
+    main{
+        padding:0 10px;
+    }
 
-  .loan-grid{
-    grid-template-columns:1fr;
-  }
+    .cards{
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:10px;
+    }
+
+    .card{
+        padding:15px;
+        border-radius:18px;
+    }
+
+    .value{
+        font-size:20px;
+    }
+
+    .panel{
+        padding:16px;
+        border-radius:18px;
+    }
+
+    .row{
+        grid-template-columns:
+            1fr 115px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
 }
 
-@media(max-width:600px){
-  main{
-    padding:0 10px;
-  }
+@media(max-width:380px){
 
-  .hero{
-    padding:23px 14px 75px;
-  }
-
-  .cards{
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-  }
-
-  .card{
-    padding:14px;
-    border-radius:17px;
-  }
-
-  .value{
-    font-size:19px;
-  }
-
-  .panel{
-    padding:16px;
-    border-radius:18px;
-  }
-
-  .transaction-form{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .transaction-form .wide{
-    grid-column:span 2;
-  }
-
-  .stats{
-    grid-template-columns:1fr;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-group.full{
-    grid-column:auto;
-  }
-}
-
-@media(max-width:390px){
-  .cards{
-    grid-template-columns:1fr;
-  }
-
-  .transaction-form{
-    grid-template-columns:1fr;
-  }
-
-  .transaction-form .wide{
-    grid-column:auto;
-  }
-}
-
-@media print{
-  .hero-actions,
-  .toolbar button,
-  .transaction-form,
-  .action-btn,
-  .modal,
-  .no-print{
-    display:none!important;
-  }
-
-  body{
-    background:white;
-  }
-
-  .hero{
-    padding-bottom:30px;
-  }
-
-  main{
-    margin:20px auto;
-  }
-
-  .panel,.card{
-    box-shadow:none;
-    break-inside:avoid;
-  }
+    .cards{
+        grid-template-columns:1fr;
+    }
 }
 </style>
 </head>
@@ -659,3556 +639,1266 @@ footer{
 <body>
 
 <header class="hero">
-  <div class="hero-inner">
-    <div class="brand">
-      <div class="logo">💰</div>
-      <div>
-        <h1>Family Finance</h1>
-        <div class="subtitle">Simple • Clear • In Control</div>
-      </div>
-    </div>
 
-    <div class="hero-actions">
-      <button class="hero-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
-      <button class="hero-btn" onclick="openSettings()">⚙️ Settings</button>
-      <button class="hero-btn" onclick="printReport()">🖨️ PDF</button>
-    </div>
-  </div>
+<div class="hero-inner">
+
+<div class="brand">
+
+<div class="logo">
+💰
+</div>
+
+<div>
+
+<h1>Family Finance</h1>
+
+<div class="subtitle">
+Simple • Clear • In Control
+</div>
+
+</div>
+
+</div>
+
+<div class="currency">
+🇶🇦 QAR • 2026–2028
+</div>
+
+</div>
+
 </header>
+
 
 <main>
 
 <!-- SUMMARY -->
+
 <section class="cards">
 
-  <div class="card">
-    <div>💵</div>
-    <div class="label">MONTHLY INCOME</div>
-    <div class="value blue" id="incomeTop">QAR 17,000.00</div>
-  </div>
+<div class="card">
 
-  <div class="card">
-    <div>💳</div>
-    <div class="label">TOTAL DEBIT</div>
-    <div class="value red" id="debitTop">QAR 0.00</div>
-  </div>
+<div>💵</div>
 
-  <div class="card">
-    <div>💚</div>
-    <div class="label">TOTAL CREDIT</div>
-    <div class="value green" id="creditTop">QAR 0.00</div>
-  </div>
+<div class="label">
+MONTHLY SALARY
+</div>
 
-  <div class="card">
-    <div>💰</div>
-    <div class="label">CURRENT BALANCE</div>
-    <div class="value green" id="balanceTop">QAR 0.00</div>
-  </div>
+<div
+class="value blue"
+id="salaryTop">
+QAR 17,000
+</div>
 
-  <div class="card">
-    <div>🎯</div>
-    <div class="label">SAVINGS THIS MONTH</div>
-    <div class="value purple" id="savedTop">QAR 0.00</div>
-  </div>
+</div>
 
-</section>
 
-<!-- TRANSACTION PANEL -->
-<section class="panel">
+<div class="card">
 
-  <h2>➕ Add Debit / Credit</h2>
+<div>💳</div>
 
-  <div class="transaction-form">
+<div class="label">
+TOTAL EXPENSES
+</div>
 
-    <div class="type-toggle">
-      <button id="debitBtn"
-              class="active-debit"
-              onclick="setTransactionType('debit')">
-        🔴 Debit
-      </button>
+<div
+class="value red"
+id="expenseTop">
+QAR 0
+</div>
 
-      <button id="creditBtn"
-              onclick="setTransactionType('credit')">
-        🟢 Credit
-      </button>
-    </div>
+</div>
 
-    <input
-      id="transactionDate"
-      type="date"
-      title="Transaction date">
 
-    <select id="transactionCategory">
-      <option value="">Select Category</option>
-    </select>
+<div class="card">
 
-    <input
-      id="transactionAmount"
-      type="number"
-      min="0"
-      step="0.01"
-      placeholder="Amount">
+<div>💚</div>
 
-    <input
-      id="transactionDescription"
-      class="wide"
-      type="text"
-      placeholder="Description / note">
+<div class="label">
+AVAILABLE BALANCE
+</div>
 
-    <button
-      class="primary"
-      onclick="addTransaction()">
-      ➕ Add Transaction
-    </button>
+<div
+class="value green"
+id="balanceTop">
+QAR 0
+</div>
 
-  </div>
+</div>
 
-  <div class="toolbar">
 
-    <select id="transactionMonthFilter"
-            onchange="renderTransactions()">
-    </select>
+<div class="card">
 
-    <select id="transactionTypeFilter"
-            onchange="renderTransactions()">
-      <option value="all">All Transactions</option>
-      <option value="debit">Debit Only</option>
-      <option value="credit">Credit Only</option>
-    </select>
+<div>🏦</div>
 
-    <select id="transactionCategoryFilter"
-            onchange="renderTransactions()">
-      <option value="all">All Categories</option>
-    </select>
+<div class="label">
+MONTHLY SAVING
+</div>
 
-    <button class="soft" onclick="clearFilters()">
-      Clear Filters
-    </button>
+<div
+class="value purple"
+id="savedTop">
+QAR 0
+</div>
 
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Category</th>
-          <th>Description</th>
-          <th>Amount</th>
-          <th class="no-print">Action</th>
-        </tr>
-      </thead>
-
-      <tbody id="transactionTable"></tbody>
-    </table>
-  </div>
+</div>
 
 </section>
+
 
 <!-- MONTHLY BUDGET -->
+
 <div class="grid">
 
 <section class="panel">
 
-  <h2>📊 Monthly Budget</h2>
+<h2>
+📊 Monthly Budget
+</h2>
 
-  <div class="toolbar">
+<div class="controls">
 
-    <select id="monthSelect"
-            onchange="changeMonth()">
-    </select>
+<select id="monthSelect">
+</select>
 
-    <button class="primary"
-            onclick="openIncomeModal()">
-      💵 Edit Income
-    </button>
+<button
+class="primary"
+onclick="saveMonth()">
 
-    <button class="soft"
-            onclick="resetMonth()">
-      🔄 Reset Month
-    </button>
+💾 Save Month
 
-  </div>
+</button>
 
-  <div class="table-wrap">
+<button
+class="soft"
+onclick="resetMonth()">
 
-    <table class="category-table">
+🔄 Reset
 
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th>Target</th>
-          <th>Spent</th>
-          <th>Credit</th>
-          <th>Remaining</th>
-          <th>Balance</th>
-          <th>Progress</th>
-        </tr>
-      </thead>
+</button>
 
-      <tbody id="categoryTable"></tbody>
+</div>
 
-    </table>
 
-  </div>
+<div
+class="rows"
+id="expenseRows">
+</div>
+
+
+<div class="legend">
+
+<span class="debt">
+🔴 Debt
+</span>
+
+<span class="family">
+🟠 Family
+</span>
+
+<span class="essential">
+🟡 Essentials
+</span>
+
+<span class="future">
+🟢 Future
+</span>
+
+<span class="lifestyle">
+🔵 Lifestyle
+</span>
+
+<span class="buffer">
+🟣 Buffer
+</span>
+
+</div>
+
+<p class="note">
+
+💡 Education is calculated from
+QAR 23,000 ÷ 12 =
+<strong>QAR 1,916.67/month</strong>.
+
+You can update every amount every month.
+
+</p>
 
 </section>
 
+
 <!-- SAVINGS -->
+
 <section class="panel">
 
-  <h2>🎯 Savings Progress</h2>
+<h2>
+🎯 Savings Progress
+</h2>
 
-  <div class="stats">
 
-    <div class="mini">
-      <span class="label">🚨 EMERGENCY FUND</span>
-      <strong class="green" id="emergencyTotal">
-        QAR 0.00
-      </strong>
-    </div>
+<div class="stats">
 
-    <div class="mini">
-      <span class="label">💜 GENERAL SAVINGS</span>
-      <strong class="purple" id="generalSavingsTotal">
-        QAR 0.00
-      </strong>
-    </div>
+<div class="mini">
 
-  </div>
+<span class="label">
+🚨 EMERGENCY FUND
+</span>
 
-  <div style="margin-top:20px">
+<strong
+class="green"
+id="emergency">
+QAR 0
+</strong>
 
-    <div class="label">
-      Emergency Target
-    </div>
+</div>
 
-    <div class="progress">
-      <div
-        class="progress-bar progress-green"
-        id="emergencyBar">
-      </div>
-    </div>
 
-    <div class="note"
-         id="emergencyPct">
-      0%
-    </div>
+<div class="mini">
 
-  </div>
+<span class="label">
+💜 GENERAL SAVINGS
+</span>
 
-  <div class="health">
+<strong
+class="purple"
+id="savings">
+QAR 0
+</strong>
 
-    <div class="label">BUDGET HEALTH</div>
+</div>
 
-    <div
-      class="health-status"
-      id="health">
-      —
-    </div>
+</div>
 
-    <div
-      class="note"
-      id="healthText">
-    </div>
 
-  </div>
+<div style="margin-top:20px">
+
+<div class="label">
+Emergency Target: QAR 5,000
+</div>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+id="emergencyBar">
+</div>
+
+</div>
+
+<div
+class="note"
+id="emergencyPct">
+0%
+</div>
+
+</div>
+
+
+<div class="health">
+
+<div class="label">
+BUDGET HEALTH
+</div>
+
+<div
+class="health-status"
+id="health">
+—
+</div>
+
+<div
+class="note"
+id="healthText">
+</div>
+
+</div>
 
 </section>
 
 </div>
 
-<!-- CHARTS -->
-<section class="panel">
 
-  <h2>📈 Financial Charts</h2>
+<!-- LOAN DETAILS -->
 
-  <div class="chart-grid">
+<section
+class="panel"
+style="margin-top:18px">
 
-    <div>
-      <div class="label">MONTHLY CASH FLOW</div>
-      <div class="chart-box">
-        <canvas id="cashFlowChart"></canvas>
-      </div>
-    </div>
+<h2>
+💳 Current Loans
+</h2>
 
-    <div>
-      <div class="label">CATEGORY SPENDING</div>
-      <div class="chart-box">
-        <canvas id="categoryChart"></canvas>
-      </div>
-    </div>
+<div class="loan-grid">
 
-  </div>
+
+<div class="loan-card">
+
+<h3>
+🔴 Loan 1
+</h3>
+
+<div class="loan-number">
+QAR 51,856.42
+</div>
+
+<div class="loan-info">
+
+Interest Rate:
+<strong>5.0%</strong>
+
+<br>
+
+Monthly Installment:
+<strong>QAR 2,377</strong>
+
+<br>
+
+Remaining Installments:
+<strong>23</strong>
+
+<br>
+
+Next Payment:
+<strong>30 Sep 2026</strong>
+
+<br>
+
+Expected Scheduled Completion:
+<strong>Jul 2028</strong>
+
+</div>
+
+<div class="loan-progress">
+
+<div
+class="loan-progress-bar"
+style="width:48%">
+</div>
+
+</div>
+
+<p class="note">
+25 of 48 installments paid.
+</p>
+
+</div>
+
+
+<div class="loan-card">
+
+<h3>
+🔴 Loan 2
+</h3>
+
+<div class="loan-number">
+QAR 125,905.92
+</div>
+
+<div class="loan-info">
+
+Monthly Installment:
+<strong>QAR 4,711</strong>
+
+<br>
+
+Interest Rate:
+<strong>Update when available</strong>
+
+<br>
+
+Remaining Installments:
+<strong>Update when available</strong>
+
+<br>
+
+Current Status:
+<strong>Active</strong>
+
+</div>
+
+<div class="loan-progress">
+
+<div
+class="loan-progress-bar"
+style="width:30%">
+</div>
+
+</div>
+
+<p class="note">
+Enter the exact remaining tenure when available for a precise payoff date.
+</p>
+
+</div>
+
+</div>
 
 </section>
 
-<!-- LOANS -->
-<section class="panel">
 
-  <h2>💳 Loan Payoff Tracking</h2>
+<!-- MILESTONES -->
 
-  <div class="toolbar">
-    <button class="primary"
-            onclick="openLoanModal()">
-      ➕ Add / Edit Loan
-    </button>
-  </div>
+<section
+class="panel"
+style="margin-top:18px">
 
-  <div class="loan-grid"
-       id="loanGrid">
-  </div>
+<h2>
+🏁 Savings Milestones
+</h2>
+
+<div class="timeline">
+
+
+<div class="milestone">
+
+<div class="milestone-date">
+Sep–Dec 2026
+</div>
+
+<div class="milestone-description">
+Both loans active
+</div>
+
+<div class="milestone-value">
+QAR 600/month
+</div>
+
+</div>
+
+
+<div class="milestone">
+
+<div class="milestone-date">
+Aug 2028
+</div>
+
+<div class="milestone-description">
+Loan 1 payment of QAR 2,377 expected to finish after the 23 remaining installments
+</div>
+
+<div class="milestone-value">
++QAR 2,377/month
+</div>
+
+</div>
+
+
+<div class="milestone">
+
+<div class="milestone-date">
+Loan 2 Completion
+</div>
+
+<div class="milestone-description">
+Exact date depends on its remaining installments and interest rate
+</div>
+
+<div class="milestone-value">
++QAR 4,711/month
+</div>
+
+</div>
+
+</div>
 
 </section>
 
-<!-- MONTHLY OVERVIEW -->
-<section class="panel">
 
-  <h2>📅 Monthly Overview</h2>
+<!-- OVERVIEW -->
 
-  <div class="table-wrap">
+<section
+class="panel"
+style="margin-top:18px">
 
-    <table>
+<h2>
+📅 2026–2028 Overview
+</h2>
 
-      <thead>
-        <tr>
-          <th>Month</th>
-          <th>Income</th>
-          <th>Debit</th>
-          <th>Credit</th>
-          <th>Balance</th>
-          <th>Savings</th>
-          <th>Saving %</th>
-        </tr>
-      </thead>
+<div class="table-wrap">
 
-      <tbody id="overviewTable"></tbody>
+<table class="month-table">
 
-    </table>
+<thead>
 
-  </div>
+<tr>
+
+<th>
+Month
+</th>
+
+<th>
+Loan
+</th>
+
+<th>
+Expenses
+</th>
+
+<th>
+Balance
+</th>
+
+<th>
+Emergency
+</th>
+
+<th>
+Savings
+</th>
+
+<th>
+Total Saved
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="overview">
+</tbody>
+
+</table>
+
+</div>
 
 </section>
 
-<!-- BACKUP -->
-<section class="panel">
 
-  <h2>💾 Data Backup & Export</h2>
+<!-- RULES -->
 
-  <p class="note">
-    Your finance data is stored locally in this browser.
-    Export a backup regularly so you can restore it on another
-    browser or computer.
-  </p>
+<section
+class="panel"
+style="margin-top:18px">
 
-  <div class="toolbar">
+<h2>
+💡 Financial Rules
+</h2>
 
-    <button class="primary"
-            onclick="exportJSON()">
-      📦 Export JSON Backup
-    </button>
+<p class="note">
 
-    <button class="soft"
-            onclick="document.getElementById('importFile').click()">
-      📥 Import JSON
-    </button>
+🔴 <strong>Debt:</strong>
+Loan payments come first.
 
-    <button class="green-btn"
-            onclick="exportCSV()">
-      📊 Export Excel / CSV
-    </button>
+<br><br>
 
-    <button class="dark-btn"
-            onclick="printReport()">
-      🖨️ Print / Save PDF
-    </button>
+🟠 <strong>Family:</strong>
+Parents/family QAR 2,200 is protected.
 
-    <input
-      id="importFile"
-      type="file"
-      accept=".json"
-      style="display:none"
-      onchange="importJSON(event)">
+<br><br>
 
-  </div>
+🟡 <strong>Essentials:</strong>
+Groceries, utilities, WiFi and mobile.
+
+<br><br>
+
+🟢 <strong>Future:</strong>
+Education and emergency fund.
+
+<br><br>
+
+🔵 <strong>Lifestyle:</strong>
+Outing and shopping are flexible.
+
+<br><br>
+
+🟣 <strong>Buffer:</strong>
+Keep money available for unexpected expenses.
+
+<br><br>
+
+⭐ <strong>Most important rule:</strong>
+When a loan finishes, redirect the freed monthly payment into savings instead of increasing spending.
+
+</p>
 
 </section>
 
 </main>
 
+
 <footer>
-  💰 Family Finance Manager<br>
-  Local browser storage • Vercel-ready • No backend required
+
+💰 Family Finance Dashboard
+
+<br>
+
+Your data is stored locally in this browser.
+
 </footer>
 
-<!-- INCOME MODAL -->
-<div class="modal" id="incomeModal">
-
-  <div class="modal-card">
-
-    <div class="modal-header">
-
-      <h2>Edit Monthly Income</h2>
-
-      <button class="close"
-              onclick="closeModal('incomeModal')">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="form-grid">
-
-      <div class="form-group">
-        <label>Month</label>
-        <select id="incomeMonth"></select>
-      </div>
-
-      <div class="form-group">
-        <label>Monthly Income</label>
-        <input
-          id="incomeAmount"
-          type="number"
-          min="0"
-          step="0.01">
-      </div>
-
-    </div>
-
-    <br>
-
-    <button class="primary"
-            onclick="saveIncome()">
-      💾 Save Income
-    </button>
-
-  </div>
-
-</div>
-
-<!-- LOAN MODAL -->
-<div class="modal" id="loanModal">
-
-  <div class="modal-card">
-
-    <div class="modal-header">
-
-      <h2>Add / Edit Loan</h2>
-
-      <button class="close"
-              onclick="closeModal('loanModal')">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="form-grid">
-
-      <div class="form-group">
-        <label>Loan Name</label>
-        <input
-          id="loanName"
-          placeholder="Loan 1">
-      </div>
-
-      <div class="form-group">
-        <label>Current Balance</label>
-        <input
-          id="loanBalance"
-          type="number"
-          min="0"
-          step="0.01">
-      </div>
-
-      <div class="form-group">
-        <label>Monthly Payment</label>
-        <input
-          id="loanPayment"
-          type="number"
-          min="0"
-          step="0.01">
-      </div>
-
-      <div class="form-group">
-        <label>Interest Rate %</label>
-        <input
-          id="loanInterest"
-          type="number"
-          min="0"
-          step="0.01">
-      </div>
-
-      <div class="form-group">
-        <label>Remaining Installments</label>
-        <input
-          id="loanMonths"
-          type="number"
-          min="0"
-          step="1">
-      </div>
-
-      <div class="form-group">
-        <label>Paid Installments</label>
-        <input
-          id="loanPaid"
-          type="number"
-          min="0"
-          step="1">
-      </div>
-
-      <div class="form-group">
-        <label>Next Payment Date</label>
-        <input
-          id="loanNextPayment"
-          type="date">
-      </div>
-
-    </div>
-
-    <br>
-
-    <button class="primary"
-            onclick="saveLoan()">
-      💾 Save Loan
-    </button>
-
-  </div>
-
-</div>
 
 <script>
 
-/* ============================================================
-   SUPABASE CONFIGURATION - YOUR CREDENTIALS
-   ============================================================ */
-
-// Your Supabase credentials
-const SUPABASE_URL = 'https://xoiytjpdrmmdwnzpscay.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_VtNI0488uBJf1xjK1wS05w_bVAQjOBh';
-
-// Initialize Supabase client
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// User ID - for demo, using a simple ID
-const USER_ID = 'family_user_1';
-
-/* ============================================================
-   FAMILY FINANCE MANAGER
-   Single-file application
-   ============================================================ */
-
-const STORAGE_KEY = "familyFinanceProV1";
-
-const DEFAULT_INCOME = 17000;
+const SALARY = 17000;
 
 const EMERGENCY_TARGET = 5000;
 
-const CATEGORIES = [
 
-  {
-    name:"Loan",
-    key:"loan",
-    icon:"🔴",
-    target:7088,
-    type:"debt"
-  },
+const defaults = {
 
-  {
-    name:"Maid Salary",
-    key:"maid",
-    icon:"🟠",
-    target:1250,
-    type:"family"
-  },
+loan:7088,
 
-  {
-    name:"Parents / Family",
-    key:"parents",
-    icon:"🟠",
-    target:2200,
-    type:"family"
-  },
+maid:1250,
 
-  {
-    name:"Kids Education",
-    key:"education",
-    icon:"🟢",
-    target:1916.67,
-    type:"future"
-  },
+parents:2200,
 
-  {
-    name:"Groceries",
-    key:"groceries",
-    icon:"🟡",
-    target:2500,
-    type:"essential"
-  },
+education:1916.67,
 
-  {
-    name:"WiFi & Mobile",
-    key:"wifi",
-    icon:"🟡",
-    target:520,
-    type:"essential"
-  },
+groceries:2500,
 
-  {
-    name:"Water & Electricity",
-    key:"utilities",
-    icon:"🟡",
-    target:400,
-    type:"essential"
-  },
+wifi:520,
 
-  {
-    name:"Outing & Shopping",
-    key:"outing",
-    icon:"🔵",
-    target:300,
-    type:"lifestyle"
-  },
+utilities:400,
 
-  {
-    name:"Emergency Fund",
-    key:"emergency",
-    icon:"🟢",
-    target:400,
-    type:"future"
-  },
+outing:300,
 
-  {
-    name:"General Savings",
-    key:"savings",
-    icon:"🟣",
-    target:200,
-    type:"savings"
-  },
+emergency:400,
 
-  {
-    name:"Miscellaneous",
-    key:"misc",
-    icon:"🟣",
-    target:225.33,
-    type:"buffer"
-  }
+savings:200,
+
+misc:225.33
+
+};
+
+
+const categories = [
+
+[
+"Loan",
+"loan",
+"🔴",
+"Loan 1 QAR 2,377 + Loan 2 QAR 4,711"
+],
+
+[
+"Maid Salary",
+"maid",
+"🟠",
+"Household support"
+],
+
+[
+"Parents / Family",
+"parents",
+"🟠",
+"Fixed — QAR 2,200"
+],
+
+[
+"Kids Education",
+"education",
+"🟢",
+"QAR 23,000 per year"
+],
+
+[
+"Groceries",
+"groceries",
+"🟡",
+"Food & household"
+],
+
+[
+"WiFi & Mobile",
+"wifi",
+"🟡",
+"Communication"
+],
+
+[
+"Water & Electricity",
+"utilities",
+"🟡",
+"Utilities"
+],
+
+[
+"Outing & Shopping",
+"outing",
+"🔵",
+"Flexible spending"
+],
+
+[
+"Emergency Fund",
+"emergency",
+"🟢",
+"Emergency savings"
+],
+
+[
+"General Savings",
+"savings",
+"🟣",
+"Long-term savings"
+],
+
+[
+"Miscellaneous",
+"misc",
+"🟣",
+"Unexpected expenses"
+]
 
 ];
 
-/* ============================================================
-   STATE
-   ============================================================ */
 
-let state = loadState();
+let data =
+JSON.parse(
+localStorage.getItem(
+"familyFinanceDashboard"
+) || "{}"
+);
 
-let transactionType = "debit";
-
-let editingLoanIndex = null;
-
-/* ============================================================
-   INITIAL STATE
-   ============================================================ */
-
-function createDefaultState(){
-
-  const months = {};
-
-  generateMonths().forEach(month=>{
-
-    months[month] = {
-      income:DEFAULT_INCOME,
-      targets:{}
-    };
-
-    CATEGORIES.forEach(cat=>{
-      months[month].targets[cat.key] = cat.target;
-    });
-
-  });
-
-  return {
-
-    months,
-
-    transactions:[],
-
-    loans:[
-
-      {
-        name:"Loan 1",
-        balance:51856.42,
-        payment:2377,
-        interest:5,
-        months:23,
-        paid:25,
-        nextPayment:"2026-09-30"
-      },
-
-      {
-        name:"Loan 2",
-        balance:125905.92,
-        payment:4711,
-        interest:0,
-        months:0,
-        paid:0,
-        nextPayment:""
-      }
-
-    ],
-
-    settings:{
-      theme:"light"
-    }
-
-  };
-
-}
-
-/* ============================================================
-   STORAGE
-   ============================================================ */
-
-function loadState(){
-
-  try{
-
-    const saved =
-      localStorage.getItem(STORAGE_KEY);
-
-    if(saved){
-
-      const parsed =
-        JSON.parse(saved);
-
-      const base =
-        createDefaultState();
-
-      return {
-        ...base,
-        ...parsed,
-        months:{
-          ...base.months,
-          ...(parsed.months || {})
-        },
-        transactions:
-          parsed.transactions || [],
-        loans:
-          parsed.loans || base.loans,
-        settings:{
-          ...base.settings,
-          ...(parsed.settings || {})
-        }
-      };
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-  return createDefaultState();
-
-}
-
-function saveState(){
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(state)
-  );
-
-}
-
-/* ============================================================
-   DATES / MONTHS
-   ============================================================ */
 
 function generateMonths(){
 
-  const result=[];
+const months=[];
 
-  const date =
-    new Date(2026,0,1);
+let date =
+new Date(2026,8,1);
 
-  const end =
-    new Date(2035,11,1);
+const end =
+new Date(2028,11,1);
 
-  while(date<=end){
 
-    result.push(
-      date.getFullYear()+
-      "-"+
-      String(date.getMonth()+1).padStart(2,"0")
-    );
+while(date <= end){
 
-    date.setMonth(
-      date.getMonth()+1
-    );
+months.push(
+date.getFullYear() +
+"-" +
+String(
+date.getMonth()+1
+).padStart(2,"0")
+);
 
-  }
-
-  return result;
-
-}
-
-function formatMonth(month){
-
-  if(!month) return "";
-
-  return new Date(
-    month+"-01T00:00:00"
-  ).toLocaleDateString(
-    "en-QA",
-    {
-      month:"long",
-      year:"numeric"
-    }
-  );
+date.setMonth(
+date.getMonth()+1
+);
 
 }
 
-function monthFromDate(date){
-
-  return date.substring(0,7);
+return months;
 
 }
 
-function today(){
 
-  const d=new Date();
+const months =
+generateMonths();
 
-  return d.toISOString().substring(0,10);
+
+const monthSelect =
+document.getElementById(
+"monthSelect"
+);
+
+
+months.forEach(month=>{
+
+const option =
+document.createElement(
+"option"
+);
+
+option.value =
+month;
+
+option.textContent =
+new Date(
+month+"-01"
+).toLocaleDateString(
+"en",
+{
+month:"long",
+year:"numeric"
+}
+);
+
+monthSelect.appendChild(
+option
+);
+
+});
+
+
+monthSelect.value =
+months[0];
+
+
+function getMonth(month){
+
+if(!data[month]){
+
+data[month]={
+...defaults
+};
 
 }
 
-/* ============================================================
-   MONEY
-   ============================================================ */
+return data[month];
+
+}
+
 
 function money(value){
 
-  return "QAR "+
-    Number(value || 0)
-      .toLocaleString(
-        "en-QA",
-        {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        }
-      );
+return "QAR " +
+Number(value || 0)
+.toLocaleString(
+"en-QA",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
 
 }
 
-/* ============================================================
-   INITIALIZE SELECTS
-   ============================================================ */
 
-function initialize(){
+function renderMonth(){
 
-  const months =
-    generateMonths();
+const month =
+monthSelect.value;
 
-  const monthSelect =
-    document.getElementById("monthSelect");
+const values =
+getMonth(month);
 
-  const transactionMonthFilter =
-    document.getElementById(
-      "transactionMonthFilter"
-    );
+const container =
+document.getElementById(
+"expenseRows"
+);
 
-  const incomeMonth =
-    document.getElementById("incomeMonth");
+container.innerHTML="";
 
-  months.forEach(month=>{
 
-    const option1 =
-      new Option(
-        formatMonth(month),
-        month
-      );
+categories.forEach(
+category=>{
 
-    const option2 =
-      new Option(
-        formatMonth(month),
-        month
-      );
+const [
+label,
+key,
+emoji,
+description
+] = category;
 
-    const option3 =
-      new Option(
-        formatMonth(month),
-        month
-      );
 
-    monthSelect.appendChild(option1);
+const row =
+document.createElement(
+"div"
+);
 
-    transactionMonthFilter.appendChild(option2);
+row.className="row";
 
-    incomeMonth.appendChild(option3);
 
-  });
+row.innerHTML = `
 
-  const currentMonth =
-    today().substring(0,7);
+<div>
 
-  monthSelect.value =
-    state.months[currentMonth]
-      ? currentMonth
-      : months[0];
+<div class="row-title">
 
-  transactionMonthFilter.value =
-    monthSelect.value;
+${emoji} ${label}
 
-  incomeMonth.value =
-    monthSelect.value;
+</div>
 
-  populateCategorySelects();
+<span class="description">
 
-  document.getElementById(
-    "transactionDate"
-  ).value=today();
+${description}
 
-  document.getElementById(
-    "transactionCategoryFilter"
-  ).innerHTML =
-    '<option value="all">All Categories</option>';
+</span>
 
-  CATEGORIES.forEach(cat=>{
+</div>
 
-    document.getElementById(
-      "transactionCategoryFilter"
-    ).add(
-      new Option(
-        cat.icon+" "+cat.name,
-        cat.key
-      )
-    );
+<input
+type="number"
+min="0"
+step="0.01"
+id="input_${key}"
+value="${values[key] ?? 0}"
+>
 
-  });
+`;
 
-  applyTheme();
 
-  renderAll();
+container.appendChild(
+row
+);
+
+});
+
+
+updateDashboard();
+
+renderOverview();
 
 }
 
-/* ============================================================
-   CATEGORY SELECTS
-   ============================================================ */
 
-function populateCategorySelects(){
+function readValues(){
 
-  const select =
-    document.getElementById(
-      "transactionCategory"
-    );
+const values={};
 
-  select.innerHTML =
-    '<option value="">Select Category</option>';
 
-  CATEGORIES.forEach(cat=>{
+categories.forEach(
+category=>{
 
-    select.add(
-      new Option(
-        cat.icon+" "+cat.name,
-        cat.key
-      )
-    );
+const key =
+category[1];
 
-  });
+const input =
+document.getElementById(
+"input_"+key
+);
 
-}
+values[key] =
+Number(input.value) || 0;
 
-/* ============================================================
-   TRANSACTION TYPE
-   ============================================================ */
+});
 
-function setTransactionType(type){
 
-  transactionType=type;
-
-  const debit =
-    document.getElementById("debitBtn");
-
-  const credit =
-    document.getElementById("creditBtn");
-
-  debit.className =
-    type==="debit"
-      ? "active-debit"
-      : "";
-
-  credit.className =
-    type==="credit"
-      ? "active-credit"
-      : "";
+return values;
 
 }
 
-/* ============================================================
-   ADD TRANSACTION
-   ============================================================ */
 
-function addTransaction(){
+function updateDashboard(){
 
-  const type =
-    transactionType;
+const values =
+readValues();
 
-  const date =
-    document.getElementById(
-      "transactionDate"
-    ).value;
 
-  const category =
-    document.getElementById(
-      "transactionCategory"
-    ).value;
+let totalExpenses=0;
 
-  const amount =
-    Number(
-      document.getElementById(
-        "transactionAmount"
-      ).value
-    );
 
-  const description =
-    document.getElementById(
-      "transactionDescription"
-    ).value.trim();
+Object.values(values)
+.forEach(value=>{
 
-  if(!date){
+totalExpenses +=
+Number(value)||0;
 
-    alert("Please select a date.");
+});
 
-    return;
 
-  }
+const balance =
+SALARY-totalExpenses;
 
-  if(!category){
 
-    alert("Please select a category.");
+const monthlySaved =
+Number(values.emergency)+
+Number(values.savings);
 
-    return;
 
-  }
+document.getElementById(
+"salaryTop"
+).textContent =
+money(SALARY);
 
-  if(!amount || amount<=0){
 
-    alert("Please enter a valid amount.");
+document.getElementById(
+"expenseTop"
+).textContent =
+money(totalExpenses);
 
-    return;
 
-  }
+document.getElementById(
+"balanceTop"
+).textContent =
+money(balance);
 
-  state.transactions.push({
 
-    id:
-      Date.now().toString()+
-      Math.random()
-        .toString(36)
-        .substring(2),
+document.getElementById(
+"savedTop"
+).textContent =
+money(monthlySaved);
 
-    type,
 
-    date,
+document.getElementById(
+"emergency"
+).textContent =
+money(values.emergency);
 
-    category,
 
-    amount,
+document.getElementById(
+"savings"
+).textContent =
+money(values.savings);
 
-    description
 
-  });
+const percentage =
+Math.min(
+100,
+values.emergency /
+EMERGENCY_TARGET *
+100
+);
 
-  saveState();
 
-  document.getElementById(
-    "transactionAmount"
-  ).value="";
+document.getElementById(
+"emergencyBar"
+).style.width =
+percentage+"%";
 
-  document.getElementById(
-    "transactionDescription"
-  ).value="";
 
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value =
-    monthFromDate(date);
+document.getElementById(
+"emergencyPct"
+).textContent =
+percentage.toFixed(0)+
+"% of QAR 5,000 starter target";
 
-  renderAll();
 
-}
+const health =
+document.getElementById(
+"health"
+);
 
-/* ============================================================
-   DELETE TRANSACTION
-   ============================================================ */
 
-function deleteTransaction(id){
+const healthText =
+document.getElementById(
+"healthText"
+);
 
-  if(!confirm(
-    "Delete this transaction?"
-  )) return;
 
-  state.transactions =
-    state.transactions.filter(
-      t=>t.id!==id
-    );
+if(balance>0){
 
-  saveState();
+health.textContent =
+"🟢 Healthy";
 
-  renderAll();
+health.className =
+"health-status green";
+
+healthText.textContent =
+"You are within the QAR 17,000 salary.";
 
 }
 
-/* ============================================================
-   TRANSACTION FILTERS
-   ============================================================ */
+else if(balance===0){
 
-function clearFilters(){
+health.textContent =
+"🟡 Fully Allocated";
 
-  document.getElementById(
-    "transactionTypeFilter"
-  ).value="all";
+health.className =
+"health-status orange";
 
-  document.getElementById(
-    "transactionCategoryFilter"
-  ).value="all";
-
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  renderTransactions();
+healthText.textContent =
+"Every riyal has a planned purpose.";
 
 }
 
-/* ============================================================
-   GET TRANSACTIONS
-   ============================================================ */
+else{
 
-function getMonthTransactions(month){
+health.textContent =
+"🔴 Over Budget";
 
-  return state.transactions.filter(
-    t=>monthFromDate(t.date)===month
-  );
+health.className =
+"health-status red";
 
-}
-
-function getCategoryTotals(month){
-
-  const totals={};
-
-  CATEGORIES.forEach(cat=>{
-
-    totals[cat.key]={
-      debit:0,
-      credit:0
-    };
-
-  });
-
-  getMonthTransactions(month)
-    .forEach(t=>{
-
-      if(!totals[t.category]){
-
-        totals[t.category]={
-          debit:0,
-          credit:0
-        };
-
-      }
-
-      totals[t.category][t.type]
-        += Number(t.amount)||0;
-
-    });
-
-  return totals;
+healthText.textContent =
+"Expenses are higher than salary. Review flexible spending.";
 
 }
 
-/* ============================================================
-   RENDER TRANSACTIONS
-   ============================================================ */
+}
 
-function renderTransactions(){
 
-  const month =
-    document.getElementById(
-      "transactionMonthFilter"
-    ).value;
+function saveMonth(){
 
-  const type =
-    document.getElementById(
-      "transactionTypeFilter"
-    ).value;
+const month =
+monthSelect.value;
 
-  const category =
-    document.getElementById(
-      "transactionCategoryFilter"
-    ).value;
 
-  let transactions =
-    getMonthTransactions(month);
+data[month] =
+readValues();
 
-  if(type!=="all"){
 
-    transactions =
-      transactions.filter(
-        t=>t.type===type
-      );
+localStorage.setItem(
+"familyFinanceDashboard",
+JSON.stringify(data)
+);
 
-  }
 
-  if(category!=="all"){
+renderOverview();
 
-    transactions =
-      transactions.filter(
-        t=>t.category===category
-      );
 
-  }
-
-  transactions.sort(
-    (a,b)=>
-      b.date.localeCompare(a.date)
-  );
-
-  const tbody =
-    document.getElementById(
-      "transactionTable"
-    );
-
-  tbody.innerHTML="";
-
-  if(!transactions.length){
-
-    tbody.innerHTML=`
-      <tr>
-        <td colspan="6">
-          <div class="empty">
-            No transactions for this filter.
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-  transactions.forEach(t=>{
-
-    const cat =
-      CATEGORIES.find(
-        c=>c.key===t.category
-      );
-
-    const tr =
-      document.createElement("tr");
-
-    tr.innerHTML=`
-
-      <td>${formatDate(t.date)}</td>
-
-      <td>
-        <span class="badge ${
-          t.type==="debit"
-            ? "badge-debit"
-            : "badge-credit"
-        }">
-          ${
-            t.type==="debit"
-              ? "Debit"
-              : "Credit"
-          }
-        </span>
-      </td>
-
-      <td>
-        <span class="badge badge-category">
-          ${cat ? cat.icon+" "+cat.name : t.category}
-        </span>
-      </td>
-
-      <td>
-        ${escapeHtml(t.description || "—")}
-      </td>
-
-      <td class="${
-        t.type==="debit"
-          ? "red"
-          : "green"
-      }">
-        ${money(t.amount)}
-      </td>
-
-      <td class="no-print">
-        <button
-          class="red-btn action-btn"
-          onclick="deleteTransaction('${t.id}')">
-          Delete
-        </button>
-      </td>
-
-    `;
-
-    tbody.appendChild(tr);
-
-  });
+alert(
+"✅ "+month+
+" saved successfully!"
+);
 
 }
 
-function formatDate(date){
-
-  return new Date(
-    date+"T00:00:00"
-  ).toLocaleDateString(
-    "en-QA",
-    {
-      day:"2-digit",
-      month:"short",
-      year:"numeric"
-    }
-  );
-
-}
-
-function escapeHtml(text){
-
-  return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-/* ============================================================
-   MONTHLY CATEGORY TABLE
-   ============================================================ */
-
-function renderCategoryTable(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  if(!state.months[month]){
-
-    state.months[month]={
-      income:DEFAULT_INCOME,
-      targets:{}
-    };
-
-  }
-
-  CATEGORIES.forEach(cat=>{
-
-    if(
-      state.months[month]
-        .targets[cat.key]===undefined
-    ){
-
-      state.months[month]
-        .targets[cat.key]=cat.target;
-
-    }
-
-  });
-
-  const totals =
-    getCategoryTotals(month);
-
-  const tbody =
-    document.getElementById(
-      "categoryTable"
-    );
-
-  tbody.innerHTML="";
-
-  let totalTarget=0;
-  let totalSpent=0;
-  let totalCredit=0;
-
-  CATEGORIES.forEach(cat=>{
-
-    const target =
-      Number(
-        state.months[month]
-          .targets[cat.key]
-      ) || 0;
-
-    const spent =
-      totals[cat.key]?.debit || 0;
-
-    const credit =
-      totals[cat.key]?.credit || 0;
-
-    const remaining =
-      target-spent;
-
-    const balance =
-      target-spent+credit;
-
-    const progress =
-      target>0
-        ? Math.min(
-            100,
-            spent/target*100
-          )
-        : 0;
-
-    totalTarget += target;
-    totalSpent += spent;
-    totalCredit += credit;
-
-    const tr =
-      document.createElement("tr");
-
-    tr.innerHTML=`
-
-      <td>
-        ${cat.icon} ${cat.name}
-      </td>
-
-      <td>
-        ${money(target)}
-      </td>
-
-      <td class="red">
-        ${money(spent)}
-      </td>
-
-      <td class="green">
-        ${money(credit)}
-      </td>
-
-      <td class="${
-        remaining<0 ? "red" : "green"
-      }">
-        ${money(remaining)}
-      </td>
-
-      <td class="${
-        balance<0 ? "red" : "green"
-      }">
-        ${money(balance)}
-      </td>
-
-      <td style="min-width:120px">
-
-        <div class="progress">
-
-          <div
-            class="progress-bar ${
-              progress>=100
-                ? "progress-red"
-                : ""
-            }"
-            style="width:${progress}%">
-          </div>
-
-        </div>
-
-        <div class="note">
-          ${progress.toFixed(0)}%
-        </div>
-
-      </td>
-
-    `;
-
-    tbody.appendChild(tr);
-
-  });
-
-  const tr =
-    document.createElement("tr");
-
-  const totalRemaining =
-    totalTarget-totalSpent;
-
-  tr.innerHTML=`
-
-    <td>
-      <strong>TOTAL</strong>
-    </td>
-
-    <td>
-      <strong>${money(totalTarget)}</strong>
-    </td>
-
-    <td class="red">
-      <strong>${money(totalSpent)}</strong>
-    </td>
-
-    <td class="green">
-      <strong>${money(totalCredit)}</strong>
-    </td>
-
-    <td class="${
-      totalRemaining<0
-        ? "red"
-        : "green"
-    }">
-      <strong>
-        ${money(totalRemaining)}
-      </strong>
-    </td>
-
-    <td>
-      <strong>
-        ${money(
-          totalTarget-
-          totalSpent+
-          totalCredit
-        )}
-      </strong>
-    </td>
-
-    <td>—</td>
-
-  `;
-
-  tbody.appendChild(tr);
-
-}
-
-/* ============================================================
-   SUMMARY
-   ============================================================ */
-
-function renderSummary(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  const monthData =
-    state.months[month];
-
-  const income =
-    Number(
-      monthData.income
-    ) || 0;
-
-  const transactions =
-    getMonthTransactions(month);
-
-  const debit =
-    transactions
-      .filter(t=>t.type==="debit")
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  const credit =
-    transactions
-      .filter(t=>t.type==="credit")
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  const balance =
-    income+credit-debit;
-
-  const savings =
-    transactions
-      .filter(
-        t=>
-          t.type==="debit" &&
-          (
-            t.category==="savings" ||
-            t.category==="emergency"
-          )
-      )
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  document.getElementById(
-    "incomeTop"
-  ).textContent =
-    money(income);
-
-  document.getElementById(
-    "debitTop"
-  ).textContent =
-    money(debit);
-
-  document.getElementById(
-    "creditTop"
-  ).textContent =
-    money(credit);
-
-  document.getElementById(
-    "balanceTop"
-  ).textContent =
-    money(balance);
-
-  document.getElementById(
-    "savedTop"
-  ).textContent =
-    money(savings);
-
-  renderHealth(
-    income,
-    debit,
-    credit,
-    balance
-  );
-
-}
-
-/* ============================================================
-   HEALTH
-   ============================================================ */
-
-function renderHealth(
-  income,
-  debit,
-  credit,
-  balance
-){
-
-  const health =
-    document.getElementById("health");
-
-  const text =
-    document.getElementById(
-      "healthText"
-    );
-
-  if(balance<0){
-
-    health.textContent =
-      "🔴 Over Budget";
-
-    health.className =
-      "health-status red";
-
-    text.textContent =
-      "Your debits are higher than your available income and credits.";
-
-  }
-  else if(
-    debit > income*0.9
-  ){
-
-    health.textContent =
-      "🟠 Watch Spending";
-
-    health.className =
-      "health-status orange";
-
-    text.textContent =
-      "More than 90% of monthly income has been allocated.";
-
-  }
-  else{
-
-    health.textContent =
-      "🟢 Healthy";
-
-    health.className =
-      "health-status green";
-
-    text.textContent =
-      "Your current month is within the available income.";
-
-  }
-
-}
-
-/* ============================================================
-   SAVINGS
-   ============================================================ */
-
-function renderSavings(){
-
-  let emergency=0;
-  let savings=0;
-
-  state.transactions.forEach(t=>{
-
-    if(
-      t.type!=="debit"
-    ) return;
-
-    if(t.category==="emergency"){
-
-      emergency +=
-        Number(t.amount)||0;
-
-    }
-
-    if(t.category==="savings"){
-
-      savings +=
-        Number(t.amount)||0;
-
-    }
-
-  });
-
-  document.getElementById(
-    "emergencyTotal"
-  ).textContent =
-    money(emergency);
-
-  document.getElementById(
-    "generalSavingsTotal"
-  ).textContent =
-    money(savings);
-
-  const pct =
-    Math.min(
-      100,
-      emergency/
-      EMERGENCY_TARGET*
-      100
-    );
-
-  document.getElementById(
-    "emergencyBar"
-  ).style.width =
-    pct+"%";
-
-  document.getElementById(
-    "emergencyPct"
-  ).textContent =
-    pct.toFixed(0)+
-    "% of QAR "+
-    EMERGENCY_TARGET+
-    " starter target";
-
-}
-
-/* ============================================================
-   MONTHLY OVERVIEW
-   ============================================================ */
-
-function renderOverview(){
-
-  const tbody =
-    document.getElementById(
-      "overviewTable"
-    );
-
-  tbody.innerHTML="";
-
-  generateMonths()
-    .forEach(month=>{
-
-      if(!state.months[month])
-        return;
-
-      const income =
-        Number(
-          state.months[month].income
-        ) || 0;
-
-      const transactions =
-        getMonthTransactions(month);
-
-      const debit =
-        transactions
-          .filter(t=>t.type==="debit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const credit =
-        transactions
-          .filter(t=>t.type==="credit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const balance =
-        income+credit-debit;
-
-      const savings =
-        transactions
-          .filter(
-            t=>
-              t.type==="debit" &&
-              (
-                t.category==="savings" ||
-                t.category==="emergency"
-              )
-          )
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const savingPct =
-        income>0
-          ? savings/income*100
-          : 0;
-
-      const tr =
-        document.createElement("tr");
-
-      tr.innerHTML=`
-
-        <td>
-          <b>${formatMonth(month)}</b>
-        </td>
-
-        <td>
-          ${money(income)}
-        </td>
-
-        <td class="red">
-          ${money(debit)}
-        </td>
-
-        <td class="green">
-          ${money(credit)}
-        </td>
-
-        <td class="${
-          balance<0
-            ? "red"
-            : "green"
-        }">
-          ${money(balance)}
-        </td>
-
-        <td class="purple">
-          ${money(savings)}
-        </td>
-
-        <td>
-          ${savingPct.toFixed(1)}%
-        </td>
-
-      `;
-
-      tbody.appendChild(tr);
-
-    });
-
-}
-
-/* ============================================================
-   MONTH CHANGE
-   ============================================================ */
-
-function changeMonth(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value=month;
-
-  document.getElementById(
-    "incomeMonth"
-  ).value=month;
-
-  const income =
-    state.months[month]?.income ||
-    DEFAULT_INCOME;
-
-  document.getElementById(
-    "incomeAmount"
-  ).value=income;
-
-  renderAll();
-
-}
-
-/* ============================================================
-   INCOME
-   ============================================================ */
-
-function openIncomeModal(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  document.getElementById(
-    "incomeMonth"
-  ).value=month;
-
-  document.getElementById(
-    "incomeAmount"
-  ).value =
-    state.months[month].income;
-
-  document.getElementById(
-    "incomeModal"
-  ).classList.add("show");
-
-}
-
-function saveIncome(){
-
-  const month =
-    document.getElementById(
-      "incomeMonth"
-    ).value;
-
-  const income =
-    Number(
-      document.getElementById(
-        "incomeAmount"
-      ).value
-    );
-
-  if(income<0){
-
-    alert(
-      "Income cannot be negative."
-    );
-
-    return;
-
-  }
-
-  state.months[month].income =
-    income;
-
-  saveState();
-
-  closeModal("incomeModal");
-
-  if(
-    month ===
-    document.getElementById(
-      "monthSelect"
-    ).value
-  ){
-
-    renderAll();
-
-  }
-  else{
-
-    renderOverview();
-
-  }
-
-}
-
-/* ============================================================
-   RESET MONTH
-   ============================================================ */
 
 function resetMonth(){
 
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  if(!confirm(
-    "Reset targets and income for "+
-    formatMonth(month)+
-    "? Transactions will NOT be deleted."
-  )) return;
-
-  state.months[month]={
-    income:DEFAULT_INCOME,
-    targets:{}
-  };
-
-  CATEGORIES.forEach(cat=>{
-
-    state.months[month]
-      .targets[cat.key]=cat.target;
-
-  });
-
-  saveState();
-
-  renderAll();
-
-}
-
-/* ============================================================
-   LOANS
-   ============================================================ */
-
-function renderLoans(){
-
-  const container =
-    document.getElementById(
-      "loanGrid"
-    );
-
-  container.innerHTML="";
-
-  if(!state.loans.length){
-
-    container.innerHTML=`
-      <div class="empty">
-        No loans added.
-      </div>
-    `;
-
-    return;
-
-  }
-
-  state.loans.forEach(
-    (loan,index)=>{
-
-      const paid =
-        Number(loan.paid)||0;
-
-      const remaining =
-        Number(loan.months)||0;
-
-      const total =
-        paid+remaining;
-
-      const progress =
-        total>0
-          ? Math.min(
-              100,
-              paid/total*100
-            )
-          : 0;
-
-      const tr =
-        document.createElement("div");
-
-      tr.className="loan-card";
-
-      tr.innerHTML=`
-
-        <h3>
-          🔴 ${escapeHtml(loan.name)}
-        </h3>
-
-        <div class="loan-number">
-          ${money(loan.balance)}
-        </div>
-
-        <div class="loan-info">
-
-          Monthly Payment:
-          <strong>${money(loan.payment)}</strong>
-
-          <br>
-
-          Interest:
-          <strong>
-            ${
-              loan.interest
-                ? loan.interest+"%"
-                : "Not set"
-            }
-          </strong>
-
-          <br>
-
-          Remaining Installments:
-          <strong>
-            ${
-              loan.months
-                ? loan.months
-                : "Not set"
-            }
-          </strong>
-
-          <br>
-
-          Paid Installments:
-          <strong>${loan.paid || 0}</strong>
-
-          <br>
-
-          Next Payment:
-          <strong>
-            ${
-              loan.nextPayment
-                ? formatDate(
-                    loan.nextPayment
-                  )
-                : "Not set"
-            }
-          </strong>
-
-        </div>
-
-        <div class="loan-progress">
-
-          <div
-            class="loan-progress-bar"
-            style="width:${progress}%">
-          </div>
-
-        </div>
-
-        <p class="note">
-          ${progress.toFixed(0)}% paid
-        </p>
-
-        <div class="toolbar no-print">
-
-          <button
-            class="soft"
-            onclick="editLoan(${index})">
-            ✏️ Edit
-          </button>
-
-          <button
-            class="red-btn"
-            onclick="deleteLoan(${index})">
-            🗑️ Delete
-          </button>
-
-        </div>
-
-      `;
-
-      container.appendChild(tr);
-
-    }
-  );
-
-}
-
-function openLoanModal(){
-
-  editingLoanIndex=null;
-
-  document.getElementById(
-    "loanName"
-  ).value="";
-
-  document.getElementById(
-    "loanBalance"
-  ).value="";
-
-    document.getElementById(
-    "loanPayment"
-  ).value="";
-
-  document.getElementById(
-    "loanInterest"
-  ).value="";
-
-  document.getElementById(
-    "loanMonths"
-  ).value="";
-
-  document.getElementById(
-    "loanPaid"
-  ).value="";
-
-  document.getElementById(
-    "loanNextPayment"
-  ).value="";
-
-  document.getElementById(
-    "loanModal"
-  ).classList.add("show");
-
+if(
+!confirm(
+"Reset this month to the recommended budget?"
+)
+){
+return;
 }
 
 
-/* ============================================================
-   EDIT LOAN
-   ============================================================ */
+const month =
+monthSelect.value;
 
-function editLoan(index){
 
-  const loan =
-    state.loans[index];
+data[month]={
+...defaults
+};
 
-  if(!loan) return;
 
-  editingLoanIndex=index;
-
-  document.getElementById(
-    "loanName"
-  ).value=loan.name || "";
-
-  document.getElementById(
-    "loanBalance"
-  ).value=loan.balance || 0;
-
-  document.getElementById(
-    "loanPayment"
-  ).value=loan.payment || 0;
-
-  document.getElementById(
-    "loanInterest"
-  ).value=loan.interest || 0;
-
-  document.getElementById(
-    "loanMonths"
-  ).value=loan.months || 0;
-
-  document.getElementById(
-    "loanPaid"
-  ).value=loan.paid || 0;
-
-  document.getElementById(
-    "loanNextPayment"
-  ).value=loan.nextPayment || "";
-
-  document.getElementById(
-    "loanModal"
-  ).classList.add("show");
-
-}
-
-
-/* ============================================================
-   SAVE LOAN
-   ============================================================ */
-
-function saveLoan(){
-
-  const name =
-    document.getElementById(
-      "loanName"
-    ).value.trim();
-
-  const balance =
-    Number(
-      document.getElementById(
-        "loanBalance"
-      ).value
-    ) || 0;
-
-  const payment =
-    Number(
-      document.getElementById(
-        "loanPayment"
-      ).value
-    ) || 0;
-
-  const interest =
-    Number(
-      document.getElementById(
-        "loanInterest"
-      ).value
-    ) || 0;
-
-  const months =
-    Number(
-      document.getElementById(
-        "loanMonths"
-      ).value
-    ) || 0;
-
-  const paid =
-    Number(
-      document.getElementById(
-        "loanPaid"
-      ).value
-    ) || 0;
-
-  const nextPayment =
-    document.getElementById(
-      "loanNextPayment"
-    ).value;
-
-  if(!name){
-
-    alert("Please enter a loan name.");
-
-    return;
-
-  }
-
-  if(balance<0){
-
-    alert(
-      "Loan balance cannot be negative."
-    );
-
-    return;
-
-  }
-
-  const loan={
-
-    name,
-    balance,
-    payment,
-    interest,
-    months,
-    paid,
-    nextPayment
-
-  };
-
-  if(editingLoanIndex===null){
-
-    state.loans.push(loan);
-
-  }
-  else{
-
-    state.loans[
-      editingLoanIndex
-    ]=loan;
-
-  }
-
-  saveState();
-
-  closeModal("loanModal");
-
-  editingLoanIndex=null;
-
-  renderLoans();
-
-}
-
-
-/* ============================================================
-   DELETE LOAN
-   ============================================================ */
-
-function deleteLoan(index){
-
-  const loan =
-    state.loans[index];
-
-  if(!loan) return;
-
-  if(!confirm(
-    `Delete "${loan.name}"?`
-  )) return;
-
-  state.loans.splice(
-    index,
-    1
-  );
-
-  saveState();
-
-  renderLoans();
-
-}
-
-
-/* ============================================================
-   MODALS
-   ============================================================ */
-
-function closeModal(id){
-
-  const modal =
-    document.getElementById(id);
-
-  if(modal){
-
-    modal.classList.remove(
-      "show"
-    );
-
-  }
-
-}
-
-
-/* Close modal when clicking outside */
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    if(
-      event.target.classList.contains(
-        "modal"
-      )
-    ){
-
-      event.target.classList.remove(
-        "show"
-      );
-
-    }
-
-  }
+localStorage.setItem(
+"familyFinanceDashboard",
+JSON.stringify(data)
 );
 
 
-/* ============================================================
-   DARK MODE
-   ============================================================ */
-
-function toggleDarkMode(){
-
-  state.settings.theme =
-    state.settings.theme==="dark"
-      ? "light"
-      : "dark";
-
-  saveState();
-
-  applyTheme();
-
-  drawCharts();
-
-}
-
-function applyTheme(){
-
-  document.documentElement
-    .setAttribute(
-      "data-theme",
-      state.settings.theme || "light"
-    );
+renderMonth();
 
 }
 
 
-/* ============================================================
-   SETTINGS
-   ============================================================ */
+function renderOverview(){
 
-function openSettings(){
-
-  const current =
-    state.settings.theme==="dark"
-      ? "Dark"
-      : "Light";
-
-  const choice =
-    prompt(
-      "Finance Manager Settings\n\n"+
-      "Current theme: "+current+
-      "\n\nEnter:\n"+
-      "1 = Light mode\n"+
-      "2 = Dark mode"
-    );
-
-  if(choice==="1"){
-
-    state.settings.theme="light";
-
-  }
-  else if(choice==="2"){
-
-    state.settings.theme="dark";
-
-  }
-  else{
-
-    return;
-
-  }
-
-  saveState();
-
-  applyTheme();
-
-  drawCharts();
-
-}
-
-
-/* ============================================================
-   CHARTS
-   ============================================================ */
-
-let cashFlowChart = null;
-let categoryChart = null;
-
-
-/*
-  These charts use the native Canvas API.
-  No external chart library is required.
-*/
-
-function drawCharts(){
-
-  drawCashFlowChart();
-
-  drawCategoryChart();
-
-}
-
-
-/* ============================================================
-   CASH FLOW CHART
-   ============================================================ */
-
-function drawCashFlowChart(){
-
-  const canvas =
-    document.getElementById(
-      "cashFlowChart"
-    );
-
-  if(!canvas) return;
-
-  const ctx =
-    canvas.getContext("2d");
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-  const dpr =
-    window.devicePixelRatio || 1;
-
-  const width =
-    Math.max(
-      300,
-      rect.width
-    );
-
-  const height =
-    Math.max(
-      250,
-      rect.height
-    );
-
-  canvas.width =
-    width*dpr;
-
-  canvas.height =
-    height*dpr;
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  ctx.clearRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-  const months =
-    generateMonths()
-      .slice(0,12);
-
-  const values =
-    months.map(month=>{
-
-      const data =
-        state.months[month];
-
-      const transactions =
-        getMonthTransactions(month);
-
-      const debit =
-        transactions
-          .filter(t=>t.type==="debit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const credit =
-        transactions
-          .filter(t=>t.type==="credit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      return {
-        income:
-          Number(data?.income)||0,
-        debit,
-        credit
-      };
-
-    });
-
-  const max =
-    Math.max(
-      100,
-      ...values.map(v=>
-        Math.max(
-          v.income,
-          v.debit,
-          v.credit
-        )
-      )
-    );
-
-  const padding={
-    top:25,
-    right:15,
-    bottom:55,
-    left:55
-  };
-
-  const chartWidth =
-    width-
-    padding.left-
-    padding.right;
-
-  const chartHeight =
-    height-
-    padding.top-
-    padding.bottom;
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--muted"
-    );
-
-  const borderColor =
-    styles.getPropertyValue(
-      "--border"
-    );
-
-  /* Grid */
-
-  ctx.strokeStyle =
-    borderColor;
-
-  ctx.lineWidth=1;
-
-  for(let i=0;i<=4;i++){
-
-    const y =
-      padding.top+
-      chartHeight-
-      (chartHeight/4)*i;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      padding.left,
-      y
-    );
-
-    ctx.lineTo(
-      width-padding.right,
-      y
-    );
-
-    ctx.stroke();
-
-    ctx.fillStyle =
-      textColor;
-
-    ctx.font="10px Arial";
-
-    const label =
-      Math.round(
-        max/4*i
-      );
-
-    ctx.fillText(
-      label.toLocaleString(),
-      5,
-      y+3
-    );
-
-  }
-
-  /* Bars */
-
-  const groupWidth =
-    chartWidth/months.length;
-
-  const barWidth =
-    Math.max(
-      4,
-      groupWidth/5
-    );
-
-  values.forEach(
-    (value,index)=>{
-
-      const x =
-        padding.left+
-        index*groupWidth+
-        groupWidth/2-
-        barWidth*1.5;
-
-      drawBar(
-        ctx,
-        x,
-        value.income,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#2563eb"
-      );
-
-      drawBar(
-        ctx,
-        x+barWidth+2,
-        value.debit,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#dc2626"
-      );
-
-      drawBar(
-        ctx,
-        x+(barWidth+2)*2,
-        value.credit,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#16a34a"
-      );
-
-      ctx.fillStyle =
-        textColor;
-
-      ctx.font="9px Arial";
-
-      const label =
-        new Date(
-          months[index]+"-01T00:00:00"
-        ).toLocaleDateString(
-          "en",
-          {
-            month:"short"
-          }
-        );
-
-      ctx.textAlign="center";
-
-      ctx.fillText(
-        label,
-        padding.left+
-        index*groupWidth+
-        groupWidth/2,
-        height-25
-      );
-
-      ctx.textAlign="left";
-
-    }
-  );
-
-  /* Legend */
-
-  drawLegend(
-    ctx,
-    [
-      ["Income","#2563eb"],
-      ["Debit","#dc2626"],
-      ["Credit","#16a34a"]
-    ],
-    padding.left,
-    8
-  );
-
-}
-
-
-function drawBar(
-  ctx,
-  x,
-  value,
-  max,
-  top,
-  height,
-  width,
-  color
-){
-
-  const barHeight =
-    value/max*height;
-
-  const y =
-    top+
-    height-
-    barHeight;
-
-  ctx.fillStyle=color;
-
-  ctx.beginPath();
-
-  ctx.roundRect(
-    x,
-    y,
-    width,
-    barHeight,
-    4
-  );
-
-  ctx.fill();
-
-}
-
-
-/* ============================================================
-   CATEGORY CHART
-   ============================================================ */
-
-function drawCategoryChart(){
-
-  const canvas =
-    document.getElementById(
-      "categoryChart"
-    );
-
-  if(!canvas) return;
-
-  const ctx =
-    canvas.getContext("2d");
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-  const dpr =
-    window.devicePixelRatio || 1;
-
-  const width =
-    Math.max(
-      300,
-      rect.width
-    );
-
-  const height =
-    Math.max(
-      250,
-      rect.height
-    );
-
-  canvas.width =
-    width*dpr;
-
-  canvas.height =
-    height*dpr;
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  ctx.clearRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  const totals =
-    getCategoryTotals(month);
-
-  const data =
-    CATEGORIES
-      .map(cat=>({
-
-        name:cat.name,
-
-        value:
-          totals[cat.key]?.debit || 0
-
-      }))
-      .filter(item=>
-        item.value>0
-      )
-      .sort(
-        (a,b)=>
-          b.value-a.value
-      )
-      .slice(0,8);
-
-  const total =
-    data.reduce(
-      (s,item)=>
-        s+item.value,
-      0
-    );
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--text"
-    );
-
-  if(!data.length){
-
-    ctx.fillStyle =
-      styles.getPropertyValue(
-        "--muted"
-      );
-
-    ctx.font="14px Arial";
-
-    ctx.textAlign="center";
-
-    ctx.fillText(
-      "No spending data for this month",
-      width/2,
-      height/2
-    );
-
-    ctx.textAlign="left";
-
-    return;
-
-  }
-
-  const centerX =
-    width*0.32;
-
-  const centerY =
-    height*0.52;
-
-  const radius =
-    Math.min(
-      width*0.25,
-      height*0.32
-    );
-
-  const colors=[
-    "#2563eb",
-    "#dc2626",
-    "#16a34a",
-    "#f59e0b",
-    "#7c3aed",
-    "#0f766e",
-    "#ec4899",
-    "#64748b"
-  ];
-
-  let start =
-    -Math.PI/2;
-
-  data.forEach(
-    (item,index)=>{
-
-      const angle =
-        item.value/
-        total*
-        Math.PI*2;
-
-      ctx.beginPath();
-
-      ctx.moveTo(
-        centerX,
-        centerY
-      );
-
-      ctx.arc(
-        centerX,
-        centerY,
-        radius,
-        start,
-        start+angle
-      );
-
-      ctx.closePath();
-
-      ctx.fillStyle =
-        colors[index];
-
-      ctx.fill();
-
-      start+=angle;
-
-    }
-  );
-
-  /* Doughnut hole */
-
-  ctx.beginPath();
-
-  ctx.arc(
-    centerX,
-    centerY,
-    radius*.58,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fillStyle =
-    styles.getPropertyValue(
-      "--card"
-    );
-
-  ctx.fill();
-
-  ctx.fillStyle=textColor;
-
-  ctx.font="bold 15px Arial";
-
-  ctx.textAlign="center";
-
-  ctx.fillText(
-    money(total),
-    centerX,
-    centerY+5
-  );
-
-  ctx.font="10px Arial";
-
-  ctx.fillStyle =
-    styles.getPropertyValue(
-      "--muted"
-    );
-
-  ctx.fillText(
-    "Total Debit",
-    centerX,
-    centerY+22
-  );
-
-  ctx.textAlign="left";
-
-  /* Legend */
-
-  const legendX =
-    width*0.57;
-
-  let legendY=45;
-
-  data.forEach(
-    (item,index)=>{
-
-      ctx.fillStyle =
-        colors[index];
-
-      ctx.fillRect(
-        legendX,
-        legendY-9,
-        11,
-        11
-      );
-
-      ctx.fillStyle=textColor;
-
-      ctx.font="11px Arial";
-
-      ctx.fillText(
-        item.name,
-        legendX+17,
-        legendY
-      );
-
-      ctx.fillStyle =
-        styles.getPropertyValue(
-          "--muted"
-        );
-
-      ctx.font="10px Arial";
-
-      ctx.fillText(
-        money(item.value),
-        legendX+17,
-        legendY+14
-      );
-
-      legendY+=39;
-
-    }
-  );
-
-}
-
-
-/* ============================================================
-   CHART LEGEND
-   ============================================================ */
-
-function drawLegend(
-  ctx,
-  items,
-  x,
-  y
-){
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--text"
-    );
-
-  let currentX=x;
-
-  items.forEach(
-    item=>{
-
-      ctx.fillStyle=item[1];
-
-      ctx.fillRect(
-        currentX,
-        y,
-        10,
-        10
-      );
-
-      ctx.fillStyle=textColor;
-
-      ctx.font="10px Arial";
-
-      ctx.fillText(
-        item[0],
-        currentX+14,
-        y+9
-      );
-
-      currentX+=
-        item[0].length*6+
-        35;
-
-    }
-  );
-
-}
-
-
-/* ============================================================
-   EXPORT JSON
-   ============================================================ */
-
-function exportJSON(){
-
-  const data =
-    JSON.stringify(
-      state,
-      null,
-      2
-    );
-
-  downloadFile(
-    data,
-    "family-finance-backup-"+today()+".json",
-    "application/json"
-  );
-
-}
-
-
-/* ============================================================
-   IMPORT JSON
-   ============================================================ */
-
-function importJSON(event){
-
-  const file =
-    event.target.files[0];
-
-  if(!file) return;
-
-  const reader =
-    new FileReader();
-
-  reader.onload=function(e){
-
-    try{
-
-      const imported =
-        JSON.parse(
-          e.target.result
-        );
-
-      if(
-        !imported ||
-        typeof imported!=="object"
-      ){
-
-        throw new Error(
-          "Invalid file"
-        );
-
-      }
-
-      if(
-        !Array.isArray(
-          imported.transactions
-        )
-      ){
-
-        throw new Error(
-          "Invalid transactions data"
-        );
-
-      }
-
-      if(
-        !imported.months ||
-        typeof imported.months!=="object"
-      ){
-
-        throw new Error(
-          "Invalid monthly data"
-        );
-
-      }
-
-      if(!confirm(
-        "Import this backup?\n\n"+
-        "Your current browser data will be replaced."
-      )){
-
-        event.target.value="";
-
-        return;
-
-      }
-
-      const base =
-        createDefaultState();
-
-      state={
-        ...base,
-        ...imported,
-        settings:{
-          ...base.settings,
-          ...(imported.settings || {})
-        }
-      };
-
-      saveState();
-
-      location.reload();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Could not import this file.\n\n"+
-        "Please select a valid Family Finance JSON backup."
-      );
-
-    }
-
-    event.target.value="";
-
-  };
-
-  reader.readAsText(file);
-
-}
-
-
-/* ============================================================
-   CSV / EXCEL COMPATIBLE EXPORT
-   ============================================================ */
-
-function exportCSV(){
-
-  const rows=[
-
-    [
-      "Date",
-      "Type",
-      "Category",
-      "Description",
-      "Amount",
-      "Month"
-    ]
-
-  ];
-
-  state.transactions
-    .slice()
-    .sort(
-      (a,b)=>
-        a.date.localeCompare(b.date)
-    )
-    .forEach(t=>{
-
-      const cat =
-        CATEGORIES.find(
-          c=>c.key===t.category
-        );
-
-      rows.push([
-
-        t.date,
-
-        t.type,
-
-        cat
-          ? cat.name
-          : t.category,
-
-        t.description || "",
-
-        Number(t.amount)||0,
-
-        monthFromDate(t.date)
-
-      ]);
-
-    });
-
-  const csv =
-    rows
-      .map(row=>
-        row.map(csvEscape)
-           .join(",")
-      )
-      .join("\r\n");
-
-  /*
-    UTF-8 BOM makes the file open correctly
-    in Microsoft Excel.
-  */
-
-  const content =
-    "\uFEFF"+csv;
-
-  downloadFile(
-    content,
-    "family-finance-transactions-"+today()+".csv",
-    "text/csv;charset=utf-8"
-  );
-
-}
-
-function csvEscape(value){
-
-  const text =
-    String(value ?? "");
-
-  if(
-    text.includes(",") ||
-    text.includes('"') ||
-    text.includes("\n")
-  ){
-
-    return '"'+
-      text.replaceAll(
-        '"',
-        '""'
-      )+
-      '"';
-
-  }
-
-  return text;
-
-}
-
-
-/* ============================================================
-   DOWNLOAD HELPER
-   ============================================================ */
-
-function downloadFile(
-  content,
-  filename,
-  type
-){
-
-  const blob =
-    new Blob(
-      [content],
-      {type}
-    );
-
-  const url =
-    URL.createObjectURL(blob);
-
-  const link =
-    document.createElement("a");
-
-  link.href=url;
-
-  link.download=filename;
-
-  document.body.appendChild(link);
-
-  link.click();
-
-  link.remove();
-
-  setTimeout(
-    ()=>{
-      URL.revokeObjectURL(url);
-    },
-    1000
-  );
-
-}
-
-
-/* ============================================================
-   PRINT / PDF
-   ============================================================ */
-
-function printReport(){
-
-  window.print();
-
-}
-
-
-/* ============================================================
-   RENDER EVERYTHING
-   ============================================================ */
-
-function renderAll(){
-
-  renderSummary();
-
-  renderCategoryTable();
-
-  renderTransactions();
-
-  renderSavings();
-
-  renderLoans();
-
-  renderOverview();
-
-  /*
-    Wait until the browser has painted the
-    layout so canvas dimensions are correct.
-  */
-
-  requestAnimationFrame(
-    ()=>{
-      drawCharts();
-    }
-  );
-
-}
-
-
-/* ============================================================
-   WINDOW RESIZE
-   ============================================================ */
-
-let resizeTimer;
-
-window.addEventListener(
-  "resize",
-  ()=>{
-
-    clearTimeout(
-      resizeTimer
-    );
-
-    resizeTimer =
-      setTimeout(
-        ()=>{
-          drawCharts();
-        },
-        150
-      );
-
-  }
-);
-
-
-/* ============================================================
-   KEEP INCOME MODAL SYNCHRONIZED
-   ============================================================ */
-
+const table =
 document.getElementById(
-  "incomeMonth"
-).addEventListener(
-  "change",
-  function(){
+"overview"
+);
 
-    const month=this.value;
+table.innerHTML="";
 
-    document.getElementById(
-      "incomeAmount"
-    ).value =
-      state.months[month]?.income ||
-      0;
 
-  }
+let emergencyTotal=0;
+
+let savingsTotal=0;
+
+
+months.forEach(
+month=>{
+
+const values =
+getMonth(month);
+
+
+let expenses=0;
+
+
+Object.values(values)
+.forEach(value=>{
+
+expenses +=
+Number(value)||0;
+
+});
+
+
+const balance =
+SALARY-expenses;
+
+
+emergencyTotal +=
+Number(values.emergency)||0;
+
+
+savingsTotal +=
+Number(values.savings)||0;
+
+
+const totalSaved =
+emergencyTotal+
+savingsTotal;
+
+
+const row =
+document.createElement(
+"tr"
 );
 
 
-/* ============================================================
-   KEYBOARD SHORTCUTS
-   ============================================================ */
+const monthName =
+new Date(
+month+"-01"
+).toLocaleDateString(
+"en",
+{
+month:"short",
+year:"numeric"
+}
+);
+
+
+row.innerHTML = `
+
+<td>
+<b>${monthName}</b>
+</td>
+
+<td>
+${money(values.loan)}
+</td>
+
+<td>
+${money(expenses)}
+</td>
+
+<td class="${
+balance >= 0
+? "green"
+: "red"
+}">
+
+${money(balance)}
+
+</td>
+
+<td>
+${money(emergencyTotal)}
+</td>
+
+<td>
+${money(savingsTotal)}
+</td>
+
+<td>
+<b>
+${money(totalSaved)}
+</b>
+</td>
+
+`;
+
+
+table.appendChild(
+row
+);
+
+});
+
+}
+
 
 document.addEventListener(
-  "keydown",
-  function(event){
+"input",
+function(event){
 
-    /*
-      Escape closes any open modal.
-    */
+if(
+event.target.tagName ===
+"INPUT"
+){
 
-    if(event.key==="Escape"){
+updateDashboard();
 
-      document
-        .querySelectorAll(".modal.show")
-        .forEach(modal=>{
-          modal.classList.remove(
-            "show"
-          );
-        });
+}
 
-    }
-
-  }
+}
 );
 
 
-/* ============================================================
-   START APPLICATION
-   ============================================================ */
+monthSelect.addEventListener(
+"change",
+renderMonth
+);
 
-initialize();
+
+renderMonth();
 
 </script>
 
