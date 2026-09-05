@@ -6,6 +6,9 @@
 <meta name="theme-color" content="#0f172a">
 <title>Family Finance Manager</title>
 
+<!-- Add Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{
   --bg:#f4f7fb;
@@ -101,6 +104,7 @@ h1{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
+  align-items:center;
   justify-content:flex-end;
 }
 
@@ -524,6 +528,43 @@ footer{
   color:var(--muted);
   font-size:12px;
   padding:25px;
+}
+
+/* Sync status styles */
+.sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: #dbeafe;
+}
+
+.sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.sync-dot.online {
+    background: #22c55e;
+}
+
+.sync-dot.syncing {
+    background: #f59e0b;
+    animation: pulse 1s infinite;
+}
+
+.sync-dot.offline {
+    background: #dc2626;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
 }
 
 @media(max-width:1050px){
@@ -1178,1949 +1219,823 @@ footer{
 </div>
 
 <script>
-
 /* ============================================================
-   FAMILY FINANCE MANAGER
-   Single-file application
+   SUPABASE CONFIGURATION - YOUR CREDENTIALS
    ============================================================ */
 
-const STORAGE_KEY = "familyFinanceProV1";
+// Your Supabase credentials
+const SUPABASE_URL = 'https://xoiytjpdrmmdwnzpscay.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_VtNI0488uBJf1xjK1wS05w_bVAQjOBh';
 
-const DEFAULT_INCOME = 17000;
+// Initialize Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const EMERGENCY_TARGET = 5000;
-
-const CATEGORIES = [
-
-  {
-    name:"Loan",
-    key:"loan",
-    icon:"🔴",
-    target:7088,
-    type:"debt"
-  },
-
-  {
-    name:"Maid Salary",
-    key:"maid",
-    icon:"🟠",
-    target:1250,
-    type:"family"
-  },
-
-  {
-    name:"Parents / Family",
-    key:"parents",
-    icon:"🟠",
-    target:2200,
-    type:"family"
-  },
-
-  {
-    name:"Kids Education",
-    key:"education",
-    icon:"🟢",
-    target:1916.67,
-    type:"future"
-  },
-
-  {
-    name:"Groceries",
-    key:"groceries",
-    icon:"🟡",
-    target:2500,
-    type:"essential"
-  },
-
-  {
-    name:"WiFi & Mobile",
-    key:"wifi",
-    icon:"🟡",
-    target:520,
-    type:"essential"
-  },
-
-  {
-    name:"Water & Electricity",
-    key:"utilities",
-    icon:"🟡",
-    target:400,
-    type:"essential"
-  },
-
-  {
-    name:"Outing & Shopping",
-    key:"outing",
-    icon:"🔵",
-    target:300,
-    type:"lifestyle"
-  },
-
-  {
-    name:"Emergency Fund",
-    key:"emergency",
-    icon:"🟢",
-    target:400,
-    type:"future"
-  },
-
-  {
-    name:"General Savings",
-    key:"savings",
-    icon:"🟣",
-    target:200,
-    type:"savings"
-  },
-
-  {
-    name:"Miscellaneous",
-    key:"misc",
-    icon:"🟣",
-    target:225.33,
-    type:"buffer"
-  }
-
-];
+// User ID - for demo, using a simple ID
+const USER_ID = 'family_user_1';
 
 /* ============================================================
    STATE
    ============================================================ */
 
-let state = loadState();
+const STORAGE_KEY = "familyFinanceProV1";
+const DEFAULT_INCOME = 17000;
+const EMERGENCY_TARGET = 5000;
 
+const CATEGORIES = [
+  { name:"Loan", key:"loan", icon:"🔴", target:7088, type:"debt" },
+  { name:"Maid Salary", key:"maid", icon:"🟠", target:1250, type:"family" },
+  { name:"Parents / Family", key:"parents", icon:"🟠", target:2200, type:"family" },
+  { name:"Kids Education", key:"education", icon:"🟢", target:1916.67, type:"future" },
+  { name:"Groceries", key:"groceries", icon:"🟡", target:2500, type:"essential" },
+  { name:"WiFi & Mobile", key:"wifi", icon:"🟡", target:520, type:"essential" },
+  { name:"Water & Electricity", key:"utilities", icon:"🟡", target:400, type:"essential" },
+  { name:"Outing & Shopping", key:"outing", icon:"🔵", target:300, type:"lifestyle" },
+  { name:"Emergency Fund", key:"emergency", icon:"🟢", target:400, type:"future" },
+  { name:"General Savings", key:"savings", icon:"🟣", target:200, type:"savings" },
+  { name:"Miscellaneous", key:"misc", icon:"🟣", target:225.33, type:"buffer" }
+];
+
+let state = null;
+let isSyncing = false;
 let transactionType = "debit";
-
 let editingLoanIndex = null;
 
 /* ============================================================
-   INITIAL STATE
+   SUPABASE FUNCTIONS
    ============================================================ */
 
-function createDefaultState(){
+async function loadFromSupabase() {
+    try {
+        console.log('Loading data from Supabase...');
+        
+        const { data, error } = await supabase
+            .from('finance_data')
+            .select('data')
+            .eq('user_id', USER_ID)
+            .order('updated_at', { ascending: false })
+            .limit(1);
 
-  const months = {};
+        if (error) {
+            console.error('Supabase load error:', error);
+            return null;
+        }
 
-  generateMonths().forEach(month=>{
-
-    months[month] = {
-      income:DEFAULT_INCOME,
-      targets:{}
-    };
-
-    CATEGORIES.forEach(cat=>{
-      months[month].targets[cat.key] = cat.target;
-    });
-
-  });
-
-  return {
-
-    months,
-
-    transactions:[],
-
-    loans:[
-
-      {
-        name:"Loan 1",
-        balance:51856.42,
-        payment:2377,
-        interest:5,
-        months:23,
-        paid:25,
-        nextPayment:"2026-09-30"
-      },
-
-      {
-        name:"Loan 2",
-        balance:125905.92,
-        payment:4711,
-        interest:0,
-        months:0,
-        paid:0,
-        nextPayment:""
-      }
-
-    ],
-
-    settings:{
-      theme:"light"
+        if (data && data.length > 0) {
+            console.log('Data loaded from Supabase');
+            return data[0].data;
+        }
+        
+        console.log('No data found in Supabase');
+        return null;
+    } catch (error) {
+        console.error('Error loading from Supabase:', error);
+        return null;
     }
+}
 
-  };
+async function saveToSupabase(stateData) {
+    try {
+        console.log('Saving to Supabase...');
+        
+        const { error } = await supabase
+            .from('finance_data')
+            .upsert({
+                user_id: USER_ID,
+                data: stateData,
+                updated_at: new Date().toISOString()
+            }, {
+                onConflict: 'user_id'
+            });
 
+        if (error) {
+            console.error('Supabase save error:', error);
+            return false;
+        }
+        
+        console.log('Data saved to Supabase successfully');
+        return true;
+    } catch (error) {
+        console.error('Error saving to Supabase:', error);
+        return false;
+    }
 }
 
 /* ============================================================
-   STORAGE
+   STATE FUNCTIONS
    ============================================================ */
 
-function loadState(){
+function createDefaultState() {
+  const months = {};
+  generateMonths().forEach(month => {
+    months[month] = {
+      income: DEFAULT_INCOME,
+      targets: {}
+    };
+    CATEGORIES.forEach(cat => {
+      months[month].targets[cat.key] = cat.target;
+    });
+  });
 
-  try{
-
-    const saved =
-      localStorage.getItem(STORAGE_KEY);
-
-    if(saved){
-
-      const parsed =
-        JSON.parse(saved);
-
-      const base =
-        createDefaultState();
-
-      return {
-        ...base,
-        ...parsed,
-        months:{
-          ...base.months,
-          ...(parsed.months || {})
-        },
-        transactions:
-          parsed.transactions || [],
-        loans:
-          parsed.loans || base.loans,
-        settings:{
-          ...base.settings,
-          ...(parsed.settings || {})
-        }
-      };
-
+  return {
+    months,
+    transactions: [],
+    loans: [
+      {
+        name: "Loan 1",
+        balance: 51856.42,
+        payment: 2377,
+        interest: 5,
+        months: 23,
+        paid: 25,
+        nextPayment: "2026-09-30"
+      },
+      {
+        name: "Loan 2",
+        balance: 125905.92,
+        payment: 4711,
+        interest: 0,
+        months: 0,
+        paid: 0,
+        nextPayment: ""
+      }
+    ],
+    settings: {
+      theme: "light"
     }
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-  return createDefaultState();
-
+  };
 }
 
-function saveState(){
+async function loadState() {
+    // Try Supabase first
+    const supabaseData = await loadFromSupabase();
+    if (supabaseData) {
+        const base = createDefaultState();
+        return {
+            ...base,
+            ...supabaseData,
+            months: {
+                ...base.months,
+                ...(supabaseData.months || {})
+            },
+            transactions: supabaseData.transactions || [],
+            loans: supabaseData.loans || base.loans,
+            settings: {
+                ...base.settings,
+                ...(supabaseData.settings || {})
+            }
+        };
+    }
 
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(state)
-  );
+    // Fallback to localStorage
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            const base = createDefaultState();
+            return {
+                ...base,
+                ...parsed,
+                months: {
+                    ...base.months,
+                    ...(parsed.months || {})
+                },
+                transactions: parsed.transactions || [],
+                loans: parsed.loans || base.loans,
+                settings: {
+                    ...base.settings,
+                    ...(parsed.settings || {})
+                }
+            };
+        }
+    } catch (error) {
+        console.error('Error loading from localStorage:', error);
+    }
 
+    return createDefaultState();
+}
+
+async function saveState() {
+    if (isSyncing) return;
+    isSyncing = true;
+
+    try {
+        const success = await saveToSupabase(state);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        
+        if (success) {
+            console.log('State saved successfully');
+            updateSyncStatus(true);
+        } else {
+            console.warn('Supabase save failed, but data saved locally');
+            updateSyncStatus(false);
+        }
+    } catch (error) {
+        console.error('Error saving state:', error);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        updateSyncStatus(false);
+    } finally {
+        isSyncing = false;
+    }
+}
+
+function updateSyncStatus(online) {
+    const statusEl = document.getElementById('syncStatus');
+    if (statusEl) {
+        const now = new Date();
+        if (online) {
+            statusEl.innerHTML = `✅ Synced: ${now.toLocaleTimeString()}`;
+            statusEl.style.color = '#22c55e';
+        } else {
+            statusEl.innerHTML = `⚠️ Offline: ${now.toLocaleTimeString()}`;
+            statusEl.style.color = '#f59e0b';
+        }
+    }
+}
+
+async function manualSync() {
+    const btn = document.getElementById('syncBtn');
+    if (btn) {
+        btn.textContent = '⏳ Syncing...';
+        btn.disabled = true;
+    }
+
+    // Save current state
+    await saveState();
+    
+    // Load latest from server
+    const latestData = await loadFromSupabase();
+    if (latestData) {
+        const base = createDefaultState();
+        state = {
+            ...base,
+            ...latestData,
+            months: {
+                ...base.months,
+                ...(latestData.months || {})
+            },
+            transactions: latestData.transactions || [],
+            loans: latestData.loans || base.loans,
+            settings: {
+                ...base.settings,
+                ...(latestData.settings || {})
+            }
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        renderAll();
+        updateSyncStatus(true);
+        alert('✅ Data synced successfully!');
+    } else {
+        alert('⚠️ Could not sync. Please check your internet connection.');
+        updateSyncStatus(false);
+    }
+
+    if (btn) {
+        btn.textContent = '🔄 Sync Now';
+        btn.disabled = false;
+    }
+}
+
+let syncTimeout;
+
+function autoSync() {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => {
+        if (!isSyncing) {
+            saveState();
+        }
+    }, 3000);
 }
 
 /* ============================================================
    DATES / MONTHS
    ============================================================ */
 
-function generateMonths(){
-
-  const result=[];
-
-  const date =
-    new Date(2026,0,1);
-
-  const end =
-    new Date(2035,11,1);
-
-  while(date<=end){
-
-    result.push(
-      date.getFullYear()+
-      "-"+
-      String(date.getMonth()+1).padStart(2,"0")
-    );
-
-    date.setMonth(
-      date.getMonth()+1
-    );
-
+function generateMonths() {
+  const result = [];
+  const date = new Date(2026, 0, 1);
+  const end = new Date(2035, 11, 1);
+  while (date <= end) {
+    result.push(date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0"));
+    date.setMonth(date.getMonth() + 1);
   }
-
   return result;
-
 }
 
-function formatMonth(month){
-
-  if(!month) return "";
-
-  return new Date(
-    month+"-01T00:00:00"
-  ).toLocaleDateString(
-    "en-QA",
-    {
-      month:"long",
-      year:"numeric"
-    }
-  );
-
-}
-
-function monthFromDate(date){
-
-  return date.substring(0,7);
-
-}
-
-function today(){
-
-  const d=new Date();
-
-  return d.toISOString().substring(0,10);
-
-}
-
-/* ============================================================
-   MONEY
-   ============================================================ */
-
-function money(value){
-
-  return "QAR "+
-    Number(value || 0)
-      .toLocaleString(
-        "en-QA",
-        {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        }
-      );
-
-}
-
-/* ============================================================
-   INITIALIZE SELECTS
-   ============================================================ */
-
-function initialize(){
-
-  const months =
-    generateMonths();
-
-  const monthSelect =
-    document.getElementById("monthSelect");
-
-  const transactionMonthFilter =
-    document.getElementById(
-      "transactionMonthFilter"
-    );
-
-  const incomeMonth =
-    document.getElementById("incomeMonth");
-
-  months.forEach(month=>{
-
-    const option1 =
-      new Option(
-        formatMonth(month),
-        month
-      );
-
-    const option2 =
-      new Option(
-        formatMonth(month),
-        month
-      );
-
-    const option3 =
-      new Option(
-        formatMonth(month),
-        month
-      );
-
-    monthSelect.appendChild(option1);
-
-    transactionMonthFilter.appendChild(option2);
-
-    incomeMonth.appendChild(option3);
-
+function formatMonth(month) {
+  if (!month) return "";
+  return new Date(month + "-01T00:00:00").toLocaleDateString("en-QA", {
+    month: "long",
+    year: "numeric"
   });
+}
 
-  const currentMonth =
-    today().substring(0,7);
+function monthFromDate(date) {
+  return date.substring(0, 7);
+}
 
-  monthSelect.value =
-    state.months[currentMonth]
-      ? currentMonth
-      : months[0];
+function today() {
+  const d = new Date();
+  return d.toISOString().substring(0, 10);
+}
 
-  transactionMonthFilter.value =
-    monthSelect.value;
-
-  incomeMonth.value =
-    monthSelect.value;
-
-  populateCategorySelects();
-
-  document.getElementById(
-    "transactionDate"
-  ).value=today();
-
-  document.getElementById(
-    "transactionCategoryFilter"
-  ).innerHTML =
-    '<option value="all">All Categories</option>';
-
-  CATEGORIES.forEach(cat=>{
-
-    document.getElementById(
-      "transactionCategoryFilter"
-    ).add(
-      new Option(
-        cat.icon+" "+cat.name,
-        cat.key
-      )
-    );
-
+function money(value) {
+  return "QAR " + Number(value || 0).toLocaleString("en-QA", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
-
-  applyTheme();
-
-  renderAll();
-
 }
 
 /* ============================================================
-   CATEGORY SELECTS
+   INITIALIZE
    ============================================================ */
 
-function populateCategorySelects(){
-
-  const select =
-    document.getElementById(
-      "transactionCategory"
-    );
-
-  select.innerHTML =
-    '<option value="">Select Category</option>';
-
-  CATEGORIES.forEach(cat=>{
-
-    select.add(
-      new Option(
-        cat.icon+" "+cat.name,
-        cat.key
-      )
-    );
-
+function populateCategorySelects() {
+  const select = document.getElementById("transactionCategory");
+  select.innerHTML = '<option value="">Select Category</option>';
+  CATEGORIES.forEach(cat => {
+    select.add(new Option(cat.icon + " " + cat.name, cat.key));
   });
+}
 
+function setTransactionType(type) {
+  transactionType = type;
+  const debit = document.getElementById("debitBtn");
+  const credit = document.getElementById("creditBtn");
+  debit.className = type === "debit" ? "active-debit" : "";
+  credit.className = type === "credit" ? "active-credit" : "";
 }
 
 /* ============================================================
-   TRANSACTION TYPE
+   TRANSACTIONS
    ============================================================ */
 
-function setTransactionType(type){
+function addTransaction() {
+  const type = transactionType;
+  const date = document.getElementById("transactionDate").value;
+  const category = document.getElementById("transactionCategory").value;
+  const amount = Number(document.getElementById("transactionAmount").value);
+  const description = document.getElementById("transactionDescription").value.trim();
 
-  transactionType=type;
-
-  const debit =
-    document.getElementById("debitBtn");
-
-  const credit =
-    document.getElementById("creditBtn");
-
-  debit.className =
-    type==="debit"
-      ? "active-debit"
-      : "";
-
-  credit.className =
-    type==="credit"
-      ? "active-credit"
-      : "";
-
-}
-
-/* ============================================================
-   ADD TRANSACTION
-   ============================================================ */
-
-function addTransaction(){
-
-  const type =
-    transactionType;
-
-  const date =
-    document.getElementById(
-      "transactionDate"
-    ).value;
-
-  const category =
-    document.getElementById(
-      "transactionCategory"
-    ).value;
-
-  const amount =
-    Number(
-      document.getElementById(
-        "transactionAmount"
-      ).value
-    );
-
-  const description =
-    document.getElementById(
-      "transactionDescription"
-    ).value.trim();
-
-  if(!date){
-
-    alert("Please select a date.");
-
-    return;
-
-  }
-
-  if(!category){
-
-    alert("Please select a category.");
-
-    return;
-
-  }
-
-  if(!amount || amount<=0){
-
-    alert("Please enter a valid amount.");
-
-    return;
-
-  }
+  if (!date) { alert("Please select a date."); return; }
+  if (!category) { alert("Please select a category."); return; }
+  if (!amount || amount <= 0) { alert("Please enter a valid amount."); return; }
 
   state.transactions.push({
-
-    id:
-      Date.now().toString()+
-      Math.random()
-        .toString(36)
-        .substring(2),
-
+    id: Date.now().toString() + Math.random().toString(36).substring(2),
     type,
-
     date,
-
     category,
-
     amount,
-
     description
-
   });
 
   saveState();
-
-  document.getElementById(
-    "transactionAmount"
-  ).value="";
-
-  document.getElementById(
-    "transactionDescription"
-  ).value="";
-
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value =
-    monthFromDate(date);
-
+  document.getElementById("transactionAmount").value = "";
+  document.getElementById("transactionDescription").value = "";
+  document.getElementById("transactionMonthFilter").value = monthFromDate(date);
   renderAll();
-
+  autoSync();
 }
 
-/* ============================================================
-   DELETE TRANSACTION
-   ============================================================ */
-
-function deleteTransaction(id){
-
-  if(!confirm(
-    "Delete this transaction?"
-  )) return;
-
-  state.transactions =
-    state.transactions.filter(
-      t=>t.id!==id
-    );
-
+function deleteTransaction(id) {
+  if (!confirm("Delete this transaction?")) return;
+  state.transactions = state.transactions.filter(t => t.id !== id);
   saveState();
-
   renderAll();
-
+  autoSync();
 }
 
-/* ============================================================
-   TRANSACTION FILTERS
-   ============================================================ */
-
-function clearFilters(){
-
-  document.getElementById(
-    "transactionTypeFilter"
-  ).value="all";
-
-  document.getElementById(
-    "transactionCategoryFilter"
-  ).value="all";
-
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
+function clearFilters() {
+  document.getElementById("transactionTypeFilter").value = "all";
+  document.getElementById("transactionCategoryFilter").value = "all";
+  document.getElementById("transactionMonthFilter").value = document.getElementById("monthSelect").value;
   renderTransactions();
-
 }
 
-/* ============================================================
-   GET TRANSACTIONS
-   ============================================================ */
-
-function getMonthTransactions(month){
-
-  return state.transactions.filter(
-    t=>monthFromDate(t.date)===month
-  );
-
+function getMonthTransactions(month) {
+  return state.transactions.filter(t => monthFromDate(t.date) === month);
 }
 
-function getCategoryTotals(month){
-
-  const totals={};
-
-  CATEGORIES.forEach(cat=>{
-
-    totals[cat.key]={
-      debit:0,
-      credit:0
-    };
-
+function getCategoryTotals(month) {
+  const totals = {};
+  CATEGORIES.forEach(cat => {
+    totals[cat.key] = { debit: 0, credit: 0 };
   });
-
-  getMonthTransactions(month)
-    .forEach(t=>{
-
-      if(!totals[t.category]){
-
-        totals[t.category]={
-          debit:0,
-          credit:0
-        };
-
-      }
-
-      totals[t.category][t.type]
-        += Number(t.amount)||0;
-
-    });
-
+  getMonthTransactions(month).forEach(t => {
+    if (!totals[t.category]) {
+      totals[t.category] = { debit: 0, credit: 0 };
+    }
+    totals[t.category][t.type] += Number(t.amount) || 0;
+  });
   return totals;
-
 }
 
-/* ============================================================
-   RENDER TRANSACTIONS
-   ============================================================ */
+function renderTransactions() {
+  const month = document.getElementById("transactionMonthFilter").value;
+  const type = document.getElementById("transactionTypeFilter").value;
+  const category = document.getElementById("transactionCategoryFilter").value;
 
-function renderTransactions(){
+  let transactions = getMonthTransactions(month);
+  if (type !== "all") transactions = transactions.filter(t => t.type === type);
+  if (category !== "all") transactions = transactions.filter(t => t.category === category);
+  transactions.sort((a, b) => b.date.localeCompare(a.date));
 
-  const month =
-    document.getElementById(
-      "transactionMonthFilter"
-    ).value;
+  const tbody = document.getElementById("transactionTable");
+  tbody.innerHTML = "";
 
-  const type =
-    document.getElementById(
-      "transactionTypeFilter"
-    ).value;
-
-  const category =
-    document.getElementById(
-      "transactionCategoryFilter"
-    ).value;
-
-  let transactions =
-    getMonthTransactions(month);
-
-  if(type!=="all"){
-
-    transactions =
-      transactions.filter(
-        t=>t.type===type
-      );
-
-  }
-
-  if(category!=="all"){
-
-    transactions =
-      transactions.filter(
-        t=>t.category===category
-      );
-
-  }
-
-  transactions.sort(
-    (a,b)=>
-      b.date.localeCompare(a.date)
-  );
-
-  const tbody =
-    document.getElementById(
-      "transactionTable"
-    );
-
-  tbody.innerHTML="";
-
-  if(!transactions.length){
-
-    tbody.innerHTML=`
-      <tr>
-        <td colspan="6">
-          <div class="empty">
-            No transactions for this filter.
-          </div>
-        </td>
-      </tr>
-    `;
-
+  if (!transactions.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty">No transactions for this filter.</div></td></tr>`;
     return;
-
   }
 
-  transactions.forEach(t=>{
-
-    const cat =
-      CATEGORIES.find(
-        c=>c.key===t.category
-      );
-
-    const tr =
-      document.createElement("tr");
-
-    tr.innerHTML=`
-
+  transactions.forEach(t => {
+    const cat = CATEGORIES.find(c => c.key === t.category);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
       <td>${formatDate(t.date)}</td>
-
-      <td>
-        <span class="badge ${
-          t.type==="debit"
-            ? "badge-debit"
-            : "badge-credit"
-        }">
-          ${
-            t.type==="debit"
-              ? "Debit"
-              : "Credit"
-          }
-        </span>
-      </td>
-
-      <td>
-        <span class="badge badge-category">
-          ${cat ? cat.icon+" "+cat.name : t.category}
-        </span>
-      </td>
-
-      <td>
-        ${escapeHtml(t.description || "—")}
-      </td>
-
-      <td class="${
-        t.type==="debit"
-          ? "red"
-          : "green"
-      }">
-        ${money(t.amount)}
-      </td>
-
-      <td class="no-print">
-        <button
-          class="red-btn action-btn"
-          onclick="deleteTransaction('${t.id}')">
-          Delete
-        </button>
-      </td>
-
+      <td><span class="badge ${t.type === "debit" ? "badge-debit" : "badge-credit"}">${t.type === "debit" ? "Debit" : "Credit"}</span></td>
+      <td><span class="badge badge-category">${cat ? cat.icon + " " + cat.name : t.category}</span></td>
+      <td>${escapeHtml(t.description || "—")}</td>
+      <td class="${t.type === "debit" ? "red" : "green"}">${money(t.amount)}</td>
+      <td class="no-print"><button class="red-btn action-btn" onclick="deleteTransaction('${t.id}')">Delete</button></td>
     `;
-
     tbody.appendChild(tr);
-
   });
-
 }
 
-function formatDate(date){
-
-  return new Date(
-    date+"T00:00:00"
-  ).toLocaleDateString(
-    "en-QA",
-    {
-      day:"2-digit",
-      month:"short",
-      year:"numeric"
-    }
-  );
-
+function formatDate(date) {
+  return new Date(date + "T00:00:00").toLocaleDateString("en-QA", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 }
 
-function escapeHtml(text){
-
-  return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
+function escapeHtml(text) {
+  return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
 
 /* ============================================================
-   MONTHLY CATEGORY TABLE
+   CATEGORY TABLE
    ============================================================ */
 
-function renderCategoryTable(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  if(!state.months[month]){
-
-    state.months[month]={
-      income:DEFAULT_INCOME,
-      targets:{}
-    };
-
+function renderCategoryTable() {
+  const month = document.getElementById("monthSelect").value;
+  if (!state.months[month]) {
+    state.months[month] = { income: DEFAULT_INCOME, targets: {} };
   }
-
-  CATEGORIES.forEach(cat=>{
-
-    if(
-      state.months[month]
-        .targets[cat.key]===undefined
-    ){
-
-      state.months[month]
-        .targets[cat.key]=cat.target;
-
+  CATEGORIES.forEach(cat => {
+    if (state.months[month].targets[cat.key] === undefined) {
+      state.months[month].targets[cat.key] = cat.target;
     }
-
   });
 
-  const totals =
-    getCategoryTotals(month);
+  const totals = getCategoryTotals(month);
+  const tbody = document.getElementById("categoryTable");
+  tbody.innerHTML = "";
 
-  const tbody =
-    document.getElementById(
-      "categoryTable"
-    );
+  let totalTarget = 0, totalSpent = 0, totalCredit = 0;
 
-  tbody.innerHTML="";
-
-  let totalTarget=0;
-  let totalSpent=0;
-  let totalCredit=0;
-
-  CATEGORIES.forEach(cat=>{
-
-    const target =
-      Number(
-        state.months[month]
-          .targets[cat.key]
-      ) || 0;
-
-    const spent =
-      totals[cat.key]?.debit || 0;
-
-    const credit =
-      totals[cat.key]?.credit || 0;
-
-    const remaining =
-      target-spent;
-
-    const balance =
-      target-spent+credit;
-
-    const progress =
-      target>0
-        ? Math.min(
-            100,
-            spent/target*100
-          )
-        : 0;
+  CATEGORIES.forEach(cat => {
+    const target = Number(state.months[month].targets[cat.key]) || 0;
+    const spent = totals[cat.key]?.debit || 0;
+    const credit = totals[cat.key]?.credit || 0;
+    const remaining = target - spent;
+    const balance = target - spent + credit;
+    const progress = target > 0 ? Math.min(100, spent / target * 100) : 0;
 
     totalTarget += target;
     totalSpent += spent;
     totalCredit += credit;
 
-    const tr =
-      document.createElement("tr");
-
-    tr.innerHTML=`
-
-      <td>
-        ${cat.icon} ${cat.name}
-      </td>
-
-      <td>
-        ${money(target)}
-      </td>
-
-      <td class="red">
-        ${money(spent)}
-      </td>
-
-      <td class="green">
-        ${money(credit)}
-      </td>
-
-      <td class="${
-        remaining<0 ? "red" : "green"
-      }">
-        ${money(remaining)}
-      </td>
-
-      <td class="${
-        balance<0 ? "red" : "green"
-      }">
-        ${money(balance)}
-      </td>
-
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${cat.icon} ${cat.name}</td>
+      <td>${money(target)}</td>
+      <td class="red">${money(spent)}</td>
+      <td class="green">${money(credit)}</td>
+      <td class="${remaining < 0 ? "red" : "green"}">${money(remaining)}</td>
+      <td class="${balance < 0 ? "red" : "green"}">${money(balance)}</td>
       <td style="min-width:120px">
-
-        <div class="progress">
-
-          <div
-            class="progress-bar ${
-              progress>=100
-                ? "progress-red"
-                : ""
-            }"
-            style="width:${progress}%">
-          </div>
-
-        </div>
-
-        <div class="note">
-          ${progress.toFixed(0)}%
-        </div>
-
+        <div class="progress"><div class="progress-bar ${progress >= 100 ? "progress-red" : ""}" style="width:${progress}%"></div></div>
+        <div class="note">${progress.toFixed(0)}%</div>
       </td>
-
     `;
-
     tbody.appendChild(tr);
-
   });
 
-  const tr =
-    document.createElement("tr");
-
-  const totalRemaining =
-    totalTarget-totalSpent;
-
-  tr.innerHTML=`
-
-    <td>
-      <strong>TOTAL</strong>
-    </td>
-
-    <td>
-      <strong>${money(totalTarget)}</strong>
-    </td>
-
-    <td class="red">
-      <strong>${money(totalSpent)}</strong>
-    </td>
-
-    <td class="green">
-      <strong>${money(totalCredit)}</strong>
-    </td>
-
-    <td class="${
-      totalRemaining<0
-        ? "red"
-        : "green"
-    }">
-      <strong>
-        ${money(totalRemaining)}
-      </strong>
-    </td>
-
-    <td>
-      <strong>
-        ${money(
-          totalTarget-
-          totalSpent+
-          totalCredit
-        )}
-      </strong>
-    </td>
-
+  const totalRemaining = totalTarget - totalSpent;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><strong>TOTAL</strong></td>
+    <td><strong>${money(totalTarget)}</strong></td>
+    <td class="red"><strong>${money(totalSpent)}</strong></td>
+    <td class="green"><strong>${money(totalCredit)}</strong></td>
+    <td class="${totalRemaining < 0 ? "red" : "green"}"><strong>${money(totalRemaining)}</strong></td>
+    <td><strong>${money(totalTarget - totalSpent + totalCredit)}</strong></td>
     <td>—</td>
-
   `;
-
   tbody.appendChild(tr);
-
 }
 
 /* ============================================================
    SUMMARY
    ============================================================ */
 
-function renderSummary(){
+function renderSummary() {
+  const month = document.getElementById("monthSelect").value;
+  const monthData = state.months[month];
+  const income = Number(monthData.income) || 0;
+  const transactions = getMonthTransactions(month);
+  const debit = transactions.filter(t => t.type === "debit").reduce((sum, t) => sum + Number(t.amount), 0);
+  const credit = transactions.filter(t => t.type === "credit").reduce((sum, t) => sum + Number(t.amount), 0);
+  const balance = income + credit - debit;
+  const savings = transactions.filter(t => t.type === "debit" && (t.category === "savings" || t.category === "emergency"))
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
+  document.getElementById("incomeTop").textContent = money(income);
+  document.getElementById("debitTop").textContent = money(debit);
+  document.getElementById("creditTop").textContent = money(credit);
+  document.getElementById("balanceTop").textContent = money(balance);
+  document.getElementById("savedTop").textContent = money(savings);
 
-  const monthData =
-    state.months[month];
-
-  const income =
-    Number(
-      monthData.income
-    ) || 0;
-
-  const transactions =
-    getMonthTransactions(month);
-
-  const debit =
-    transactions
-      .filter(t=>t.type==="debit")
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  const credit =
-    transactions
-      .filter(t=>t.type==="credit")
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  const balance =
-    income+credit-debit;
-
-  const savings =
-    transactions
-      .filter(
-        t=>
-          t.type==="debit" &&
-          (
-            t.category==="savings" ||
-            t.category==="emergency"
-          )
-      )
-      .reduce(
-        (sum,t)=>
-          sum+Number(t.amount),
-        0
-      );
-
-  document.getElementById(
-    "incomeTop"
-  ).textContent =
-    money(income);
-
-  document.getElementById(
-    "debitTop"
-  ).textContent =
-    money(debit);
-
-  document.getElementById(
-    "creditTop"
-  ).textContent =
-    money(credit);
-
-  document.getElementById(
-    "balanceTop"
-  ).textContent =
-    money(balance);
-
-  document.getElementById(
-    "savedTop"
-  ).textContent =
-    money(savings);
-
-  renderHealth(
-    income,
-    debit,
-    credit,
-    balance
-  );
-
+  renderHealth(income, debit, credit, balance);
 }
 
-/* ============================================================
-   HEALTH
-   ============================================================ */
-
-function renderHealth(
-  income,
-  debit,
-  credit,
-  balance
-){
-
-  const health =
-    document.getElementById("health");
-
-  const text =
-    document.getElementById(
-      "healthText"
-    );
-
-  if(balance<0){
-
-    health.textContent =
-      "🔴 Over Budget";
-
-    health.className =
-      "health-status red";
-
-    text.textContent =
-      "Your debits are higher than your available income and credits.";
-
+function renderHealth(income, debit, credit, balance) {
+  const health = document.getElementById("health");
+  const text = document.getElementById("healthText");
+  if (balance < 0) {
+    health.textContent = "🔴 Over Budget";
+    health.className = "health-status red";
+    text.textContent = "Your debits are higher than your available income and credits.";
+  } else if (debit > income * 0.9) {
+    health.textContent = "🟠 Watch Spending";
+    health.className = "health-status orange";
+    text.textContent = "More than 90% of monthly income has been allocated.";
+  } else {
+    health.textContent = "🟢 Healthy";
+    health.className = "health-status green";
+    text.textContent = "Your current month is within the available income.";
   }
-  else if(
-    debit > income*0.9
-  ){
-
-    health.textContent =
-      "🟠 Watch Spending";
-
-    health.className =
-      "health-status orange";
-
-    text.textContent =
-      "More than 90% of monthly income has been allocated.";
-
-  }
-  else{
-
-    health.textContent =
-      "🟢 Healthy";
-
-    health.className =
-      "health-status green";
-
-    text.textContent =
-      "Your current month is within the available income.";
-
-  }
-
 }
 
 /* ============================================================
    SAVINGS
    ============================================================ */
 
-function renderSavings(){
-
-  let emergency=0;
-  let savings=0;
-
-  state.transactions.forEach(t=>{
-
-    if(
-      t.type!=="debit"
-    ) return;
-
-    if(t.category==="emergency"){
-
-      emergency +=
-        Number(t.amount)||0;
-
-    }
-
-    if(t.category==="savings"){
-
-      savings +=
-        Number(t.amount)||0;
-
-    }
-
+function renderSavings() {
+  let emergency = 0, savings = 0;
+  state.transactions.forEach(t => {
+    if (t.type !== "debit") return;
+    if (t.category === "emergency") emergency += Number(t.amount) || 0;
+    if (t.category === "savings") savings += Number(t.amount) || 0;
   });
 
-  document.getElementById(
-    "emergencyTotal"
-  ).textContent =
-    money(emergency);
-
-  document.getElementById(
-    "generalSavingsTotal"
-  ).textContent =
-    money(savings);
-
-  const pct =
-    Math.min(
-      100,
-      emergency/
-      EMERGENCY_TARGET*
-      100
-    );
-
-  document.getElementById(
-    "emergencyBar"
-  ).style.width =
-    pct+"%";
-
-  document.getElementById(
-    "emergencyPct"
-  ).textContent =
-    pct.toFixed(0)+
-    "% of QAR "+
-    EMERGENCY_TARGET+
-    " starter target";
-
+  document.getElementById("emergencyTotal").textContent = money(emergency);
+  document.getElementById("generalSavingsTotal").textContent = money(savings);
+  const pct = Math.min(100, emergency / EMERGENCY_TARGET * 100);
+  document.getElementById("emergencyBar").style.width = pct + "%";
+  document.getElementById("emergencyPct").textContent = pct.toFixed(0) + "% of QAR " + EMERGENCY_TARGET + " starter target";
 }
 
 /* ============================================================
-   MONTHLY OVERVIEW
+   OVERVIEW
    ============================================================ */
 
-function renderOverview(){
+function renderOverview() {
+  const tbody = document.getElementById("overviewTable");
+  tbody.innerHTML = "";
+  generateMonths().forEach(month => {
+    if (!state.months[month]) return;
+    const income = Number(state.months[month].income) || 0;
+    const transactions = getMonthTransactions(month);
+    const debit = transactions.filter(t => t.type === "debit").reduce((s, t) => s + Number(t.amount), 0);
+    const credit = transactions.filter(t => t.type === "credit").reduce((s, t) => s + Number(t.amount), 0);
+    const balance = income + credit - debit;
+    const savings = transactions.filter(t => t.type === "debit" && (t.category === "savings" || t.category === "emergency"))
+      .reduce((s, t) => s + Number(t.amount), 0);
+    const savingPct = income > 0 ? savings / income * 100 : 0;
 
-  const tbody =
-    document.getElementById(
-      "overviewTable"
-    );
-
-  tbody.innerHTML="";
-
-  generateMonths()
-    .forEach(month=>{
-
-      if(!state.months[month])
-        return;
-
-      const income =
-        Number(
-          state.months[month].income
-        ) || 0;
-
-      const transactions =
-        getMonthTransactions(month);
-
-      const debit =
-        transactions
-          .filter(t=>t.type==="debit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const credit =
-        transactions
-          .filter(t=>t.type==="credit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const balance =
-        income+credit-debit;
-
-      const savings =
-        transactions
-          .filter(
-            t=>
-              t.type==="debit" &&
-              (
-                t.category==="savings" ||
-                t.category==="emergency"
-              )
-          )
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const savingPct =
-        income>0
-          ? savings/income*100
-          : 0;
-
-      const tr =
-        document.createElement("tr");
-
-      tr.innerHTML=`
-
-        <td>
-          <b>${formatMonth(month)}</b>
-        </td>
-
-        <td>
-          ${money(income)}
-        </td>
-
-        <td class="red">
-          ${money(debit)}
-        </td>
-
-        <td class="green">
-          ${money(credit)}
-        </td>
-
-        <td class="${
-          balance<0
-            ? "red"
-            : "green"
-        }">
-          ${money(balance)}
-        </td>
-
-        <td class="purple">
-          ${money(savings)}
-        </td>
-
-        <td>
-          ${savingPct.toFixed(1)}%
-        </td>
-
-      `;
-
-      tbody.appendChild(tr);
-
-    });
-
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${formatMonth(month)}</b></td>
+      <td>${money(income)}</td>
+      <td class="red">${money(debit)}</td>
+      <td class="green">${money(credit)}</td>
+      <td class="${balance < 0 ? "red" : "green"}">${money(balance)}</td>
+      <td class="purple">${money(savings)}</td>
+      <td>${savingPct.toFixed(1)}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 /* ============================================================
    MONTH CHANGE
    ============================================================ */
 
-function changeMonth(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  document.getElementById(
-    "transactionMonthFilter"
-  ).value=month;
-
-  document.getElementById(
-    "incomeMonth"
-  ).value=month;
-
-  const income =
-    state.months[month]?.income ||
-    DEFAULT_INCOME;
-
-  document.getElementById(
-    "incomeAmount"
-  ).value=income;
-
+function changeMonth() {
+  const month = document.getElementById("monthSelect").value;
+  document.getElementById("transactionMonthFilter").value = month;
+  document.getElementById("incomeMonth").value = month;
+  const income = state.months[month]?.income || DEFAULT_INCOME;
+  document.getElementById("incomeAmount").value = income;
   renderAll();
-
 }
 
 /* ============================================================
    INCOME
    ============================================================ */
 
-function openIncomeModal(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  document.getElementById(
-    "incomeMonth"
-  ).value=month;
-
-  document.getElementById(
-    "incomeAmount"
-  ).value =
-    state.months[month].income;
-
-  document.getElementById(
-    "incomeModal"
-  ).classList.add("show");
-
+function openIncomeModal() {
+  const month = document.getElementById("monthSelect").value;
+  document.getElementById("incomeMonth").value = month;
+  document.getElementById("incomeAmount").value = state.months[month].income;
+  document.getElementById("incomeModal").classList.add("show");
 }
 
-function saveIncome(){
-
-  const month =
-    document.getElementById(
-      "incomeMonth"
-    ).value;
-
-  const income =
-    Number(
-      document.getElementById(
-        "incomeAmount"
-      ).value
-    );
-
-  if(income<0){
-
-    alert(
-      "Income cannot be negative."
-    );
-
-    return;
-
-  }
-
-  state.months[month].income =
-    income;
-
+function saveIncome() {
+  const month = document.getElementById("incomeMonth").value;
+  const income = Number(document.getElementById("incomeAmount").value);
+  if (income < 0) { alert("Income cannot be negative."); return; }
+  state.months[month].income = income;
   saveState();
-
   closeModal("incomeModal");
-
-  if(
-    month ===
-    document.getElementById(
-      "monthSelect"
-    ).value
-  ){
-
+  if (month === document.getElementById("monthSelect").value) {
     renderAll();
-
-  }
-  else{
-
+  } else {
     renderOverview();
-
   }
-
+  autoSync();
 }
 
-/* ============================================================
-   RESET MONTH
-   ============================================================ */
-
-function resetMonth(){
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  if(!confirm(
-    "Reset targets and income for "+
-    formatMonth(month)+
-    "? Transactions will NOT be deleted."
-  )) return;
-
-  state.months[month]={
-    income:DEFAULT_INCOME,
-    targets:{}
-  };
-
-  CATEGORIES.forEach(cat=>{
-
-    state.months[month]
-      .targets[cat.key]=cat.target;
-
+function resetMonth() {
+  const month = document.getElementById("monthSelect").value;
+  if (!confirm("Reset targets and income for " + formatMonth(month) + "? Transactions will NOT be deleted.")) return;
+  state.months[month] = { income: DEFAULT_INCOME, targets: {} };
+  CATEGORIES.forEach(cat => {
+    state.months[month].targets[cat.key] = cat.target;
   });
-
   saveState();
-
   renderAll();
-
+  autoSync();
 }
 
 /* ============================================================
    LOANS
    ============================================================ */
 
-function renderLoans(){
+function renderLoans() {
+  const container = document.getElementById("loanGrid");
+  container.innerHTML = "";
+  if (!state.loans.length) {
+    container.innerHTML = `<div class="empty">No loans added.</div>`;
+    return;
+  }
 
-  const container =
-    document.getElementById(
-      "loanGrid"
-    );
+  state.loans.forEach((loan, index) => {
+    const paid = Number(loan.paid) || 0;
+    const remaining = Number(loan.months) || 0;
+    const total = paid + remaining;
+    const progress = total > 0 ? Math.min(100, paid / total * 100) : 0;
 
-  container.innerHTML="";
-
-  if(!state.loans.length){
-
-    container.innerHTML=`
-      <div class="empty">
-        No loans added.
+    const div = document.createElement("div");
+    div.className = "loan-card";
+    div.innerHTML = `
+      <h3>🔴 ${escapeHtml(loan.name)}</h3>
+      <div class="loan-number">${money(loan.balance)}</div>
+      <div class="loan-info">
+        Monthly Payment: <strong>${money(loan.payment)}</strong><br>
+        Interest: <strong>${loan.interest ? loan.interest + "%" : "Not set"}</strong><br>
+        Remaining Installments: <strong>${loan.months || "Not set"}</strong><br>
+        Paid Installments: <strong>${loan.paid || 0}</strong><br>
+        Next Payment: <strong>${loan.nextPayment ? formatDate(loan.nextPayment) : "Not set"}</strong>
+      </div>
+      <div class="loan-progress"><div class="loan-progress-bar" style="width:${progress}%"></div></div>
+      <p class="note">${progress.toFixed(0)}% paid</p>
+      <div class="toolbar no-print">
+        <button class="soft" onclick="editLoan(${index})">✏️ Edit</button>
+        <button class="red-btn" onclick="deleteLoan(${index})">🗑️ Delete</button>
       </div>
     `;
-
-    return;
-
-  }
-
-  state.loans.forEach(
-    (loan,index)=>{
-
-      const paid =
-        Number(loan.paid)||0;
-
-      const remaining =
-        Number(loan.months)||0;
-
-      const total =
-        paid+remaining;
-
-      const progress =
-        total>0
-          ? Math.min(
-              100,
-              paid/total*100
-            )
-          : 0;
-
-      const tr =
-        document.createElement("div");
-
-      tr.className="loan-card";
-
-      tr.innerHTML=`
-
-        <h3>
-          🔴 ${escapeHtml(loan.name)}
-        </h3>
-
-        <div class="loan-number">
-          ${money(loan.balance)}
-        </div>
-
-        <div class="loan-info">
-
-          Monthly Payment:
-          <strong>${money(loan.payment)}</strong>
-
-          <br>
-
-          Interest:
-          <strong>
-            ${
-              loan.interest
-                ? loan.interest+"%"
-                : "Not set"
-            }
-          </strong>
-
-          <br>
-
-          Remaining Installments:
-          <strong>
-            ${
-              loan.months
-                ? loan.months
-                : "Not set"
-            }
-          </strong>
-
-          <br>
-
-          Paid Installments:
-          <strong>${loan.paid || 0}</strong>
-
-          <br>
-
-          Next Payment:
-          <strong>
-            ${
-              loan.nextPayment
-                ? formatDate(
-                    loan.nextPayment
-                  )
-                : "Not set"
-            }
-          </strong>
-
-        </div>
-
-        <div class="loan-progress">
-
-          <div
-            class="loan-progress-bar"
-            style="width:${progress}%">
-          </div>
-
-        </div>
-
-        <p class="note">
-          ${progress.toFixed(0)}% paid
-        </p>
-
-        <div class="toolbar no-print">
-
-          <button
-            class="soft"
-            onclick="editLoan(${index})">
-            ✏️ Edit
-          </button>
-
-          <button
-            class="red-btn"
-            onclick="deleteLoan(${index})">
-            🗑️ Delete
-          </button>
-
-        </div>
-
-      `;
-
-      container.appendChild(tr);
-
-    }
-  );
-
+    container.appendChild(div);
+  });
 }
 
-function openLoanModal(){
-
-  editingLoanIndex=null;
-
-  document.getElementById(
-    "loanName"
-  ).value="";
-
-  document.getElementById(
-    "loanBalance"
-  ).value="";
-
-    document.getElementById(
-    "loanPayment"
-  ).value="";
-
-  document.getElementById(
-    "loanInterest"
-  ).value="";
-
-  document.getElementById(
-    "loanMonths"
-  ).value="";
-
-  document.getElementById(
-    "loanPaid"
-  ).value="";
-
-  document.getElementById(
-    "loanNextPayment"
-  ).value="";
-
-  document.getElementById(
-    "loanModal"
-  ).classList.add("show");
-
+function openLoanModal() {
+  editingLoanIndex = null;
+  document.getElementById("loanName").value = "";
+  document.getElementById("loanBalance").value = "";
+  document.getElementById("loanPayment").value = "";
+  document.getElementById("loanInterest").value = "";
+  document.getElementById("loanMonths").value = "";
+  document.getElementById("loanPaid").value = "";
+  document.getElementById("loanNextPayment").value = "";
+  document.getElementById("loanModal").classList.add("show");
 }
 
-
-/* ============================================================
-   EDIT LOAN
-   ============================================================ */
-
-function editLoan(index){
-
-  const loan =
-    state.loans[index];
-
-  if(!loan) return;
-
-  editingLoanIndex=index;
-
-  document.getElementById(
-    "loanName"
-  ).value=loan.name || "";
-
-  document.getElementById(
-    "loanBalance"
-  ).value=loan.balance || 0;
-
-  document.getElementById(
-    "loanPayment"
-  ).value=loan.payment || 0;
-
-  document.getElementById(
-    "loanInterest"
-  ).value=loan.interest || 0;
-
-  document.getElementById(
-    "loanMonths"
-  ).value=loan.months || 0;
-
-  document.getElementById(
-    "loanPaid"
-  ).value=loan.paid || 0;
-
-  document.getElementById(
-    "loanNextPayment"
-  ).value=loan.nextPayment || "";
-
-  document.getElementById(
-    "loanModal"
-  ).classList.add("show");
-
+function editLoan(index) {
+  const loan = state.loans[index];
+  if (!loan) return;
+  editingLoanIndex = index;
+  document.getElementById("loanName").value = loan.name || "";
+  document.getElementById("loanBalance").value = loan.balance || 0;
+  document.getElementById("loanPayment").value = loan.payment || 0;
+  document.getElementById("loanInterest").value = loan.interest || 0;
+  document.getElementById("loanMonths").value = loan.months || 0;
+  document.getElementById("loanPaid").value = loan.paid || 0;
+  document.getElementById("loanNextPayment").value = loan.nextPayment || "";
+  document.getElementById("loanModal").classList.add("show");
 }
 
+function saveLoan() {
+  const name = document.getElementById("loanName").value.trim();
+  const balance = Number(document.getElementById("loanBalance").value) || 0;
+  const payment = Number(document.getElementById("loanPayment").value) || 0;
+  const interest = Number(document.getElementById("loanInterest").value) || 0;
+  const months = Number(document.getElementById("loanMonths").value) || 0;
+  const paid = Number(document.getElementById("loanPaid").value) || 0;
+  const nextPayment = document.getElementById("loanNextPayment").value;
 
-/* ============================================================
-   SAVE LOAN
-   ============================================================ */
+  if (!name) { alert("Please enter a loan name."); return; }
+  if (balance < 0) { alert("Loan balance cannot be negative."); return; }
 
-function saveLoan(){
+  const loan = { name, balance, payment, interest, months, paid, nextPayment };
 
-  const name =
-    document.getElementById(
-      "loanName"
-    ).value.trim();
-
-  const balance =
-    Number(
-      document.getElementById(
-        "loanBalance"
-      ).value
-    ) || 0;
-
-  const payment =
-    Number(
-      document.getElementById(
-        "loanPayment"
-      ).value
-    ) || 0;
-
-  const interest =
-    Number(
-      document.getElementById(
-        "loanInterest"
-      ).value
-    ) || 0;
-
-  const months =
-    Number(
-      document.getElementById(
-        "loanMonths"
-      ).value
-    ) || 0;
-
-  const paid =
-    Number(
-      document.getElementById(
-        "loanPaid"
-      ).value
-    ) || 0;
-
-  const nextPayment =
-    document.getElementById(
-      "loanNextPayment"
-    ).value;
-
-  if(!name){
-
-    alert("Please enter a loan name.");
-
-    return;
-
-  }
-
-  if(balance<0){
-
-    alert(
-      "Loan balance cannot be negative."
-    );
-
-    return;
-
-  }
-
-  const loan={
-
-    name,
-    balance,
-    payment,
-    interest,
-    months,
-    paid,
-    nextPayment
-
-  };
-
-  if(editingLoanIndex===null){
-
+  if (editingLoanIndex === null) {
     state.loans.push(loan);
-
-  }
-  else{
-
-    state.loans[
-      editingLoanIndex
-    ]=loan;
-
+  } else {
+    state.loans[editingLoanIndex] = loan;
   }
 
   saveState();
-
   closeModal("loanModal");
-
-  editingLoanIndex=null;
-
+  editingLoanIndex = null;
   renderLoans();
-
+  autoSync();
 }
 
-
-/* ============================================================
-   DELETE LOAN
-   ============================================================ */
-
-function deleteLoan(index){
-
-  const loan =
-    state.loans[index];
-
-  if(!loan) return;
-
-  if(!confirm(
-    `Delete "${loan.name}"?`
-  )) return;
-
-  state.loans.splice(
-    index,
-    1
-  );
-
+function deleteLoan(index) {
+  const loan = state.loans[index];
+  if (!loan) return;
+  if (!confirm(`Delete "${loan.name}"?`)) return;
+  state.loans.splice(index, 1);
   saveState();
-
   renderLoans();
-
+  autoSync();
 }
-
 
 /* ============================================================
    MODALS
    ============================================================ */
 
-function closeModal(id){
-
-  const modal =
-    document.getElementById(id);
-
-  if(modal){
-
-    modal.classList.remove(
-      "show"
-    );
-
-  }
-
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove("show");
 }
 
-
-/* Close modal when clicking outside */
-
-document.addEventListener(
-  "click",
-  function(event){
-
-    if(
-      event.target.classList.contains(
-        "modal"
-      )
-    ){
-
-      event.target.classList.remove(
-        "show"
-      );
-
-    }
-
+document.addEventListener("click", function(event) {
+  if (event.target.classList.contains("modal")) {
+    event.target.classList.remove("show");
   }
-);
-
+});
 
 /* ============================================================
    DARK MODE
    ============================================================ */
 
-function toggleDarkMode(){
-
-  state.settings.theme =
-    state.settings.theme==="dark"
-      ? "light"
-      : "dark";
-
+function toggleDarkMode() {
+  state.settings.theme = state.settings.theme === "dark" ? "light" : "dark";
   saveState();
-
   applyTheme();
-
   drawCharts();
-
 }
 
-function applyTheme(){
-
-  document.documentElement
-    .setAttribute(
-      "data-theme",
-      state.settings.theme || "light"
-    );
-
+function applyTheme() {
+  document.documentElement.setAttribute("data-theme", state.settings.theme || "light");
 }
 
-
-/* ============================================================
-   SETTINGS
-   ============================================================ */
-
-function openSettings(){
-
-  const current =
-    state.settings.theme==="dark"
-      ? "Dark"
-      : "Light";
-
-  const choice =
-    prompt(
-      "Finance Manager Settings\n\n"+
-      "Current theme: "+current+
-      "\n\nEnter:\n"+
-      "1 = Light mode\n"+
-      "2 = Dark mode"
-    );
-
-  if(choice==="1"){
-
-    state.settings.theme="light";
-
-  }
-  else if(choice==="2"){
-
-    state.settings.theme="dark";
-
-  }
-  else{
-
+function openSettings() {
+  const current = state.settings.theme === "dark" ? "Dark" : "Light";
+  const choice = prompt(
+    "Finance Manager Settings\n\n" +
+    "Current theme: " + current +
+    "\n\nEnter:\n" +
+    "1 = Light mode\n" +
+    "2 = Dark mode"
+  );
+  if (choice === "1") {
+    state.settings.theme = "light";
+  } else if (choice === "2") {
+    state.settings.theme = "dark";
+  } else {
     return;
-
   }
-
   saveState();
-
   applyTheme();
-
   drawCharts();
-
 }
-
 
 /* ============================================================
    CHARTS
@@ -3129,1066 +2044,368 @@ function openSettings(){
 let cashFlowChart = null;
 let categoryChart = null;
 
-
-/*
-  These charts use the native Canvas API.
-  No external chart library is required.
-*/
-
-function drawCharts(){
-
+function drawCharts() {
   drawCashFlowChart();
-
   drawCategoryChart();
-
 }
 
+function drawCashFlowChart() {
+  const canvas = document.getElementById("cashFlowChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const width = Math.max(300, rect.width);
+  const height = Math.max(250, rect.height);
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
 
-/* ============================================================
-   CASH FLOW CHART
-   ============================================================ */
+  const months = generateMonths().slice(0, 12);
+  const values = months.map(month => {
+    const data = state.months[month];
+    const transactions = getMonthTransactions(month);
+    const debit = transactions.filter(t => t.type === "debit").reduce((s, t) => s + Number(t.amount), 0);
+    const credit = transactions.filter(t => t.type === "credit").reduce((s, t) => s + Number(t.amount), 0);
+    return { income: Number(data?.income) || 0, debit, credit };
+  });
 
-function drawCashFlowChart(){
+  const max = Math.max(100, ...values.map(v => Math.max(v.income, v.debit, v.credit)));
+  const padding = { top: 25, right: 15, bottom: 55, left: 55 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
 
-  const canvas =
-    document.getElementById(
-      "cashFlowChart"
-    );
+  const styles = getComputedStyle(document.documentElement);
+  const textColor = styles.getPropertyValue("--muted");
+  const borderColor = styles.getPropertyValue("--border");
 
-  if(!canvas) return;
-
-  const ctx =
-    canvas.getContext("2d");
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-  const dpr =
-    window.devicePixelRatio || 1;
-
-  const width =
-    Math.max(
-      300,
-      rect.width
-    );
-
-  const height =
-    Math.max(
-      250,
-      rect.height
-    );
-
-  canvas.width =
-    width*dpr;
-
-  canvas.height =
-    height*dpr;
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  ctx.clearRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-  const months =
-    generateMonths()
-      .slice(0,12);
-
-  const values =
-    months.map(month=>{
-
-      const data =
-        state.months[month];
-
-      const transactions =
-        getMonthTransactions(month);
-
-      const debit =
-        transactions
-          .filter(t=>t.type==="debit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      const credit =
-        transactions
-          .filter(t=>t.type==="credit")
-          .reduce(
-            (s,t)=>
-              s+Number(t.amount),
-            0
-          );
-
-      return {
-        income:
-          Number(data?.income)||0,
-        debit,
-        credit
-      };
-
-    });
-
-  const max =
-    Math.max(
-      100,
-      ...values.map(v=>
-        Math.max(
-          v.income,
-          v.debit,
-          v.credit
-        )
-      )
-    );
-
-  const padding={
-    top:25,
-    right:15,
-    bottom:55,
-    left:55
-  };
-
-  const chartWidth =
-    width-
-    padding.left-
-    padding.right;
-
-  const chartHeight =
-    height-
-    padding.top-
-    padding.bottom;
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--muted"
-    );
-
-  const borderColor =
-    styles.getPropertyValue(
-      "--border"
-    );
-
-  /* Grid */
-
-  ctx.strokeStyle =
-    borderColor;
-
-  ctx.lineWidth=1;
-
-  for(let i=0;i<=4;i++){
-
-    const y =
-      padding.top+
-      chartHeight-
-      (chartHeight/4)*i;
-
+  // Grid
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padding.top + chartHeight - (chartHeight / 4) * i;
     ctx.beginPath();
-
-    ctx.moveTo(
-      padding.left,
-      y
-    );
-
-    ctx.lineTo(
-      width-padding.right,
-      y
-    );
-
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(width - padding.right, y);
     ctx.stroke();
-
-    ctx.fillStyle =
-      textColor;
-
-    ctx.font="10px Arial";
-
-    const label =
-      Math.round(
-        max/4*i
-      );
-
-    ctx.fillText(
-      label.toLocaleString(),
-      5,
-      y+3
-    );
-
+    ctx.fillStyle = textColor;
+    ctx.font = "10px Arial";
+    ctx.fillText(Math.round(max / 4 * i).toLocaleString(), 5, y + 3);
   }
 
-  /* Bars */
+  // Bars
+  const groupWidth = chartWidth / months.length;
+  const barWidth = Math.max(4, groupWidth / 5);
+  values.forEach((value, index) => {
+    const x = padding.left + index * groupWidth + groupWidth / 2 - barWidth * 1.5;
+    drawBar(ctx, x, value.income, max, padding.top, chartHeight, barWidth, "#2563eb");
+    drawBar(ctx, x + barWidth + 2, value.debit, max, padding.top, chartHeight, barWidth, "#dc2626");
+    drawBar(ctx, x + (barWidth + 2) * 2, value.credit, max, padding.top, chartHeight, barWidth, "#16a34a");
+    ctx.fillStyle = textColor;
+    ctx.font = "9px Arial";
+    const label = new Date(months[index] + "-01T00:00:00").toLocaleDateString("en", { month: "short" });
+    ctx.textAlign = "center";
+    ctx.fillText(label, padding.left + index * groupWidth + groupWidth / 2, height - 25);
+    ctx.textAlign = "left";
+  });
 
-  const groupWidth =
-    chartWidth/months.length;
-
-  const barWidth =
-    Math.max(
-      4,
-      groupWidth/5
-    );
-
-  values.forEach(
-    (value,index)=>{
-
-      const x =
-        padding.left+
-        index*groupWidth+
-        groupWidth/2-
-        barWidth*1.5;
-
-      drawBar(
-        ctx,
-        x,
-        value.income,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#2563eb"
-      );
-
-      drawBar(
-        ctx,
-        x+barWidth+2,
-        value.debit,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#dc2626"
-      );
-
-      drawBar(
-        ctx,
-        x+(barWidth+2)*2,
-        value.credit,
-        max,
-        padding.top,
-        chartHeight,
-        barWidth,
-        "#16a34a"
-      );
-
-      ctx.fillStyle =
-        textColor;
-
-      ctx.font="9px Arial";
-
-      const label =
-        new Date(
-          months[index]+"-01T00:00:00"
-        ).toLocaleDateString(
-          "en",
-          {
-            month:"short"
-          }
-        );
-
-      ctx.textAlign="center";
-
-      ctx.fillText(
-        label,
-        padding.left+
-        index*groupWidth+
-        groupWidth/2,
-        height-25
-      );
-
-      ctx.textAlign="left";
-
-    }
-  );
-
-  /* Legend */
-
-  drawLegend(
-    ctx,
-    [
-      ["Income","#2563eb"],
-      ["Debit","#dc2626"],
-      ["Credit","#16a34a"]
-    ],
-    padding.left,
-    8
-  );
-
+  // Legend
+  drawLegend(ctx, [["Income", "#2563eb"], ["Debit", "#dc2626"], ["Credit", "#16a34a"]], padding.left, 8);
 }
 
-
-function drawBar(
-  ctx,
-  x,
-  value,
-  max,
-  top,
-  height,
-  width,
-  color
-){
-
-  const barHeight =
-    value/max*height;
-
-  const y =
-    top+
-    height-
-    barHeight;
-
-  ctx.fillStyle=color;
-
+function drawBar(ctx, x, value, max, top, height, width, color) {
+  const barHeight = value / max * height;
+  const y = top + height - barHeight;
+  ctx.fillStyle = color;
   ctx.beginPath();
-
-  ctx.roundRect(
-    x,
-    y,
-    width,
-    barHeight,
-    4
-  );
-
+  ctx.roundRect(x, y, width, barHeight, 4);
   ctx.fill();
-
 }
 
+function drawCategoryChart() {
+  const canvas = document.getElementById("categoryChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const width = Math.max(300, rect.width);
+  const height = Math.max(250, rect.height);
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, width, height);
 
-/* ============================================================
-   CATEGORY CHART
-   ============================================================ */
+  const month = document.getElementById("monthSelect").value;
+  const totals = getCategoryTotals(month);
+  const data = CATEGORIES.map(cat => ({ name: cat.name, value: totals[cat.key]?.debit || 0 }))
+    .filter(item => item.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
 
-function drawCategoryChart(){
+  const total = data.reduce((s, item) => s + item.value, 0);
+  const styles = getComputedStyle(document.documentElement);
+  const textColor = styles.getPropertyValue("--text");
 
-  const canvas =
-    document.getElementById(
-      "categoryChart"
-    );
-
-  if(!canvas) return;
-
-  const ctx =
-    canvas.getContext("2d");
-
-  const rect =
-    canvas.getBoundingClientRect();
-
-  const dpr =
-    window.devicePixelRatio || 1;
-
-  const width =
-    Math.max(
-      300,
-      rect.width
-    );
-
-  const height =
-    Math.max(
-      250,
-      rect.height
-    );
-
-  canvas.width =
-    width*dpr;
-
-  canvas.height =
-    height*dpr;
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  ctx.clearRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-  const month =
-    document.getElementById(
-      "monthSelect"
-    ).value;
-
-  const totals =
-    getCategoryTotals(month);
-
-  const data =
-    CATEGORIES
-      .map(cat=>({
-
-        name:cat.name,
-
-        value:
-          totals[cat.key]?.debit || 0
-
-      }))
-      .filter(item=>
-        item.value>0
-      )
-      .sort(
-        (a,b)=>
-          b.value-a.value
-      )
-      .slice(0,8);
-
-  const total =
-    data.reduce(
-      (s,item)=>
-        s+item.value,
-      0
-    );
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--text"
-    );
-
-  if(!data.length){
-
-    ctx.fillStyle =
-      styles.getPropertyValue(
-        "--muted"
-      );
-
-    ctx.font="14px Arial";
-
-    ctx.textAlign="center";
-
-    ctx.fillText(
-      "No spending data for this month",
-      width/2,
-      height/2
-    );
-
-    ctx.textAlign="left";
-
+  if (!data.length) {
+    ctx.fillStyle = styles.getPropertyValue("--muted");
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("No spending data for this month", width / 2, height / 2);
+    ctx.textAlign = "left";
     return;
-
   }
 
-  const centerX =
-    width*0.32;
+  const centerX = width * 0.32;
+  const centerY = height * 0.52;
+  const radius = Math.min(width * 0.25, height * 0.32);
+  const colors = ["#2563eb", "#dc2626", "#16a34a", "#f59e0b", "#7c3aed", "#0f766e", "#ec4899", "#64748b"];
 
-  const centerY =
-    height*0.52;
+  let start = -Math.PI / 2;
+  data.forEach((item, index) => {
+    const angle = item.value / total * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, start, start + angle);
+    ctx.closePath();
+    ctx.fillStyle = colors[index];
+    ctx.fill();
+    start += angle;
+  });
 
-  const radius =
-    Math.min(
-      width*0.25,
-      height*0.32
-    );
-
-  const colors=[
-    "#2563eb",
-    "#dc2626",
-    "#16a34a",
-    "#f59e0b",
-    "#7c3aed",
-    "#0f766e",
-    "#ec4899",
-    "#64748b"
-  ];
-
-  let start =
-    -Math.PI/2;
-
-  data.forEach(
-    (item,index)=>{
-
-      const angle =
-        item.value/
-        total*
-        Math.PI*2;
-
-      ctx.beginPath();
-
-      ctx.moveTo(
-        centerX,
-        centerY
-      );
-
-      ctx.arc(
-        centerX,
-        centerY,
-        radius,
-        start,
-        start+angle
-      );
-
-      ctx.closePath();
-
-      ctx.fillStyle =
-        colors[index];
-
-      ctx.fill();
-
-      start+=angle;
-
-    }
-  );
-
-  /* Doughnut hole */
-
+  // Doughnut hole
   ctx.beginPath();
-
-  ctx.arc(
-    centerX,
-    centerY,
-    radius*.58,
-    0,
-    Math.PI*2
-  );
-
-  ctx.fillStyle =
-    styles.getPropertyValue(
-      "--card"
-    );
-
+  ctx.arc(centerX, centerY, radius * 0.58, 0, Math.PI * 2);
+  ctx.fillStyle = styles.getPropertyValue("--card");
   ctx.fill();
 
-  ctx.fillStyle=textColor;
+  ctx.fillStyle = textColor;
+  ctx.font = "bold 15px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(money(total), centerX, centerY + 5);
+  ctx.font = "10px Arial";
+  ctx.fillStyle = styles.getPropertyValue("--muted");
+  ctx.fillText("Total Debit", centerX, centerY + 22);
+  ctx.textAlign = "left";
 
-  ctx.font="bold 15px Arial";
-
-  ctx.textAlign="center";
-
-  ctx.fillText(
-    money(total),
-    centerX,
-    centerY+5
-  );
-
-  ctx.font="10px Arial";
-
-  ctx.fillStyle =
-    styles.getPropertyValue(
-      "--muted"
-    );
-
-  ctx.fillText(
-    "Total Debit",
-    centerX,
-    centerY+22
-  );
-
-  ctx.textAlign="left";
-
-  /* Legend */
-
-  const legendX =
-    width*0.57;
-
-  let legendY=45;
-
-  data.forEach(
-    (item,index)=>{
-
-      ctx.fillStyle =
-        colors[index];
-
-      ctx.fillRect(
-        legendX,
-        legendY-9,
-        11,
-        11
-      );
-
-      ctx.fillStyle=textColor;
-
-      ctx.font="11px Arial";
-
-      ctx.fillText(
-        item.name,
-        legendX+17,
-        legendY
-      );
-
-      ctx.fillStyle =
-        styles.getPropertyValue(
-          "--muted"
-        );
-
-      ctx.font="10px Arial";
-
-      ctx.fillText(
-        money(item.value),
-        legendX+17,
-        legendY+14
-      );
-
-      legendY+=39;
-
-    }
-  );
-
+  // Legend
+  const legendX = width * 0.57;
+  let legendY = 45;
+  data.forEach((item, index) => {
+    ctx.fillStyle = colors[index];
+    ctx.fillRect(legendX, legendY - 9, 11, 11);
+    ctx.fillStyle = textColor;
+    ctx.font = "11px Arial";
+    ctx.fillText(item.name, legendX + 17, legendY);
+    ctx.fillStyle = styles.getPropertyValue("--muted");
+    ctx.font = "10px Arial";
+    ctx.fillText(money(item.value), legendX + 17, legendY + 14);
+    legendY += 39;
+  });
 }
 
-
-/* ============================================================
-   CHART LEGEND
-   ============================================================ */
-
-function drawLegend(
-  ctx,
-  items,
-  x,
-  y
-){
-
-  const styles =
-    getComputedStyle(
-      document.documentElement
-    );
-
-  const textColor =
-    styles.getPropertyValue(
-      "--text"
-    );
-
-  let currentX=x;
-
-  items.forEach(
-    item=>{
-
-      ctx.fillStyle=item[1];
-
-      ctx.fillRect(
-        currentX,
-        y,
-        10,
-        10
-      );
-
-      ctx.fillStyle=textColor;
-
-      ctx.font="10px Arial";
-
-      ctx.fillText(
-        item[0],
-        currentX+14,
-        y+9
-      );
-
-      currentX+=
-        item[0].length*6+
-        35;
-
-    }
-  );
-
+function drawLegend(ctx, items, x, y) {
+  const styles = getComputedStyle(document.documentElement);
+  const textColor = styles.getPropertyValue("--text");
+  let currentX = x;
+  items.forEach(item => {
+    ctx.fillStyle = item[1];
+    ctx.fillRect(currentX, y, 10, 10);
+    ctx.fillStyle = textColor;
+    ctx.font = "10px Arial";
+    ctx.fillText(item[0], currentX + 14, y + 9);
+    currentX += item[0].length * 6 + 35;
+  });
 }
 
-
 /* ============================================================
-   EXPORT JSON
+   EXPORT / IMPORT
    ============================================================ */
 
-function exportJSON(){
-
-  const data =
-    JSON.stringify(
-      state,
-      null,
-      2
-    );
-
-  downloadFile(
-    data,
-    "family-finance-backup-"+today()+".json",
-    "application/json"
-  );
-
+function exportJSON() {
+  const data = JSON.stringify(state, null, 2);
+  downloadFile(data, "family-finance-backup-" + today() + ".json", "application/json");
 }
 
-
-/* ============================================================
-   IMPORT JSON
-   ============================================================ */
-
-function importJSON(event){
-
-  const file =
-    event.target.files[0];
-
-  if(!file) return;
-
-  const reader =
-    new FileReader();
-
-  reader.onload=function(e){
-
-    try{
-
-      const imported =
-        JSON.parse(
-          e.target.result
-        );
-
-      if(
-        !imported ||
-        typeof imported!=="object"
-      ){
-
-        throw new Error(
-          "Invalid file"
-        );
-
-      }
-
-      if(
-        !Array.isArray(
-          imported.transactions
-        )
-      ){
-
-        throw new Error(
-          "Invalid transactions data"
-        );
-
-      }
-
-      if(
-        !imported.months ||
-        typeof imported.months!=="object"
-      ){
-
-        throw new Error(
-          "Invalid monthly data"
-        );
-
-      }
-
-      if(!confirm(
-        "Import this backup?\n\n"+
-        "Your current browser data will be replaced."
-      )){
-
-        event.target.value="";
-
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported || typeof imported !== "object") throw new Error("Invalid file");
+      if (!Array.isArray(imported.transactions)) throw new Error("Invalid transactions data");
+      if (!imported.months || typeof imported.months !== "object") throw new Error("Invalid monthly data");
+      if (!confirm("Import this backup?\n\nYour current browser data will be replaced.")) {
+        event.target.value = "";
         return;
-
       }
-
-      const base =
-        createDefaultState();
-
-      state={
+      const base = createDefaultState();
+      state = {
         ...base,
         ...imported,
-        settings:{
+        settings: {
           ...base.settings,
           ...(imported.settings || {})
         }
       };
-
       saveState();
-
       location.reload();
-
-    }
-    catch(error){
-
+    } catch (error) {
       console.error(error);
-
-      alert(
-        "Could not import this file.\n\n"+
-        "Please select a valid Family Finance JSON backup."
-      );
-
+      alert("Could not import this file.\n\nPlease select a valid Family Finance JSON backup.");
     }
-
-    event.target.value="";
-
+    event.target.value = "";
   };
-
   reader.readAsText(file);
-
 }
 
+function exportCSV() {
+  const rows = [["Date", "Type", "Category", "Description", "Amount", "Month"]];
+  state.transactions.slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(t => {
+    const cat = CATEGORIES.find(c => c.key === t.category);
+    rows.push([t.date, t.type, cat ? cat.name : t.category, t.description || "", Number(t.amount) || 0, monthFromDate(t.date)]);
+  });
+  const csv = rows.map(row => row.map(csvEscape).join(",")).join("\r\n");
+  const content = "\uFEFF" + csv;
+  downloadFile(content, "family-finance-transactions-" + today() + ".csv", "text/csv;charset=utf-8");
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  if (text.includes(",") || text.includes('"') || text.includes("\n")) {
+    return '"' + text.replaceAll('"', '""') + '"';
+  }
+  return text;
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function printReport() {
+  window.print();
+}
 
 /* ============================================================
-   CSV / EXCEL COMPATIBLE EXPORT
+   ADD SYNC UI
    ============================================================ */
 
-function exportCSV(){
+function addSyncUI() {
+    const heroActions = document.querySelector('.hero-actions');
+    if (heroActions) {
+        const syncStatus = document.createElement('span');
+        syncStatus.id = 'syncStatus';
+        syncStatus.className = 'sync-status';
+        syncStatus.textContent = '🔄 Connecting...';
+        
+        const syncBtn = document.createElement('button');
+        syncBtn.id = 'syncBtn';
+        syncBtn.className = 'hero-btn';
+        syncBtn.textContent = '🔄 Sync Now';
+        syncBtn.onclick = manualSync;
+        
+        heroActions.prepend(syncStatus);
+        heroActions.prepend(syncBtn);
+    }
+}
 
-  const rows=[
+/* ============================================================
+   RENDER ALL
+   ============================================================ */
 
-    [
-      "Date",
-      "Type",
-      "Category",
-      "Description",
-      "Amount",
-      "Month"
-    ]
+function renderAll() {
+  renderSummary();
+  renderCategoryTable();
+  renderTransactions();
+  renderSavings();
+  renderLoans();
+  renderOverview();
+  requestAnimationFrame(() => drawCharts());
+}
 
-  ];
+/* ============================================================
+   INITIALIZE
+   ============================================================ */
 
-  state.transactions
-    .slice()
-    .sort(
-      (a,b)=>
-        a.date.localeCompare(b.date)
-    )
-    .forEach(t=>{
+async function initialize() {
+    state = await loadState();
+    addSyncUI();
+    
+    const months = generateMonths();
+    const monthSelect = document.getElementById("monthSelect");
+    const transactionMonthFilter = document.getElementById("transactionMonthFilter");
+    const incomeMonth = document.getElementById("incomeMonth");
 
-      const cat =
-        CATEGORIES.find(
-          c=>c.key===t.category
-        );
-
-      rows.push([
-
-        t.date,
-
-        t.type,
-
-        cat
-          ? cat.name
-          : t.category,
-
-        t.description || "",
-
-        Number(t.amount)||0,
-
-        monthFromDate(t.date)
-
-      ]);
-
+    months.forEach(month => {
+        const option1 = new Option(formatMonth(month), month);
+        const option2 = new Option(formatMonth(month), month);
+        const option3 = new Option(formatMonth(month), month);
+        monthSelect.appendChild(option1);
+        transactionMonthFilter.appendChild(option2);
+        incomeMonth.appendChild(option3);
     });
 
-  const csv =
-    rows
-      .map(row=>
-        row.map(csvEscape)
-           .join(",")
-      )
-      .join("\r\n");
+    const currentMonth = today().substring(0, 7);
+    monthSelect.value = state.months[currentMonth] ? currentMonth : months[0];
+    transactionMonthFilter.value = monthSelect.value;
+    incomeMonth.value = monthSelect.value;
 
-  /*
-    UTF-8 BOM makes the file open correctly
-    in Microsoft Excel.
-  */
+    populateCategorySelects();
+    
+    document.getElementById("transactionDate").value = today();
+    document.getElementById("transactionCategoryFilter").innerHTML = 
+        '<option value="all">All Categories</option>';
+    
+    CATEGORIES.forEach(cat => {
+        document.getElementById("transactionCategoryFilter").add(
+            new Option(cat.icon + " " + cat.name, cat.key)
+        );
+    });
 
-  const content =
-    "\uFEFF"+csv;
-
-  downloadFile(
-    content,
-    "family-finance-transactions-"+today()+".csv",
-    "text/csv;charset=utf-8"
-  );
-
+    applyTheme();
+    renderAll();
+    updateSyncStatus(true);
+    
+    // Auto-sync every 30 seconds
+    setInterval(() => {
+        if (!isSyncing) {
+            saveState();
+        }
+    }, 30000);
 }
-
-function csvEscape(value){
-
-  const text =
-    String(value ?? "");
-
-  if(
-    text.includes(",") ||
-    text.includes('"') ||
-    text.includes("\n")
-  ){
-
-    return '"'+
-      text.replaceAll(
-        '"',
-        '""'
-      )+
-      '"';
-
-  }
-
-  return text;
-
-}
-
 
 /* ============================================================
-   DOWNLOAD HELPER
-   ============================================================ */
-
-function downloadFile(
-  content,
-  filename,
-  type
-){
-
-  const blob =
-    new Blob(
-      [content],
-      {type}
-    );
-
-  const url =
-    URL.createObjectURL(blob);
-
-  const link =
-    document.createElement("a");
-
-  link.href=url;
-
-  link.download=filename;
-
-  document.body.appendChild(link);
-
-  link.click();
-
-  link.remove();
-
-  setTimeout(
-    ()=>{
-      URL.revokeObjectURL(url);
-    },
-    1000
-  );
-
-}
-
-
-/* ============================================================
-   PRINT / PDF
-   ============================================================ */
-
-function printReport(){
-
-  window.print();
-
-}
-
-
-/* ============================================================
-   RENDER EVERYTHING
-   ============================================================ */
-
-function renderAll(){
-
-  renderSummary();
-
-  renderCategoryTable();
-
-  renderTransactions();
-
-  renderSavings();
-
-  renderLoans();
-
-  renderOverview();
-
-  /*
-    Wait until the browser has painted the
-    layout so canvas dimensions are correct.
-  */
-
-  requestAnimationFrame(
-    ()=>{
-      drawCharts();
-    }
-  );
-
-}
-
-
-/* ============================================================
-   WINDOW RESIZE
+   WINDOW EVENTS
    ============================================================ */
 
 let resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => drawCharts(), 150);
+});
 
-window.addEventListener(
-  "resize",
-  ()=>{
-
-    clearTimeout(
-      resizeTimer
-    );
-
-    resizeTimer =
-      setTimeout(
-        ()=>{
-          drawCharts();
-        },
-        150
-      );
-
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    document.querySelectorAll(".modal.show").forEach(modal => {
+      modal.classList.remove("show");
+    });
   }
-);
+});
 
-
-/* ============================================================
-   KEEP INCOME MODAL SYNCHRONIZED
-   ============================================================ */
-
-document.getElementById(
-  "incomeMonth"
-).addEventListener(
-  "change",
-  function(){
-
-    const month=this.value;
-
-    document.getElementById(
-      "incomeAmount"
-    ).value =
-      state.months[month]?.income ||
-      0;
-
-  }
-);
-
-
-/* ============================================================
-   KEYBOARD SHORTCUTS
-   ============================================================ */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    /*
-      Escape closes any open modal.
-    */
-
-    if(event.key==="Escape"){
-
-      document
-        .querySelectorAll(".modal.show")
-        .forEach(modal=>{
-          modal.classList.remove(
-            "show"
-          );
-        });
-
-    }
-
-  }
-);
-
+document.getElementById("incomeMonth").addEventListener("change", function() {
+  const month = this.value;
+  document.getElementById("incomeAmount").value = state.months[month]?.income || 0;
+});
 
 /* ============================================================
    START APPLICATION
