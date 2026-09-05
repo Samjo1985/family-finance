@@ -1,0 +1,4202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>Family Finance Manager</title>
+
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#fff;
+  --card2:#f8fafc;
+  --text:#172033;
+  --muted:#64748b;
+  --border:#e5eaf2;
+  --navy:#0f172a;
+  --blue:#2563eb;
+  --green:#16a34a;
+  --red:#dc2626;
+  --orange:#f59e0b;
+  --purple:#7c3aed;
+  --teal:#0f766e;
+  --shadow:0 12px 35px rgba(15,23,42,.08);
+}
+
+[data-theme="dark"]{
+  --bg:#0b1120;
+  --card:#111827;
+  --card2:#172033;
+  --text:#f1f5f9;
+  --muted:#94a3b8;
+  --border:#263247;
+  --navy:#020617;
+  --shadow:0 12px 35px rgba(0,0,0,.25);
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.hero{
+  background:
+    radial-gradient(circle at 90% 20%,rgba(45,212,191,.25),transparent 35%),
+    linear-gradient(135deg,#0f172a,#173b63 55%,#075e54);
+  color:white;
+  padding:28px 16px 85px;
+}
+
+.hero-inner{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.logo{
+  width:58px;
+  height:58px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.12);
+  font-size:29px;
+}
+
+h1{
+  margin:0;
+  font-size:clamp(26px,4vw,40px);
+}
+
+.subtitle{
+  margin-top:6px;
+  color:#dbeafe;
+}
+
+.hero-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.hero-btn{
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.1);
+  color:white;
+  border-radius:12px;
+  padding:10px 13px;
+}
+
+main{
+  max-width:1250px;
+  margin:-50px auto 60px;
+  padding:0 15px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:14px;
+}
+
+.card,.panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+
+.card{
+  padding:19px;
+}
+
+.panel{
+  padding:21px;
+  margin-top:18px;
+}
+
+.label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.55px;
+}
+
+.value{
+  margin-top:7px;
+  font-size:24px;
+  font-weight:850;
+}
+
+.blue{color:var(--blue)}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.orange{color:var(--orange)}
+.purple{color:var(--purple)}
+.teal{color:var(--teal)}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:18px;
+}
+
+.panel h2{
+  margin:0 0 16px;
+  font-size:20px;
+}
+
+.toolbar{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+input,select{
+  min-height:42px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:9px 11px;
+  background:var(--card);
+  color:var(--text);
+  outline:none;
+}
+
+input:focus,select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:750;
+}
+
+.primary{
+  background:var(--navy);
+  color:white;
+}
+
+.soft{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.green-btn{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.red-btn{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.dark-btn{
+  background:#334155;
+  color:white;
+}
+
+.transaction-form{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:9px;
+  padding:15px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  margin-bottom:18px;
+}
+
+.transaction-form input,
+.transaction-form select{
+  width:100%;
+}
+
+.transaction-form .wide{
+  grid-column:span 2;
+}
+
+.transaction-form button{
+  min-height:42px;
+}
+
+.type-toggle{
+  display:flex;
+  gap:5px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:4px;
+}
+
+.type-toggle button{
+  flex:1;
+  padding:7px 9px;
+}
+
+.type-toggle .active-debit{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.type-toggle .active-credit{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:11px;
+  border-bottom:1px solid var(--border);
+  text-align:right;
+  white-space:nowrap;
+}
+
+th:first-child,td:first-child{
+  text-align:left;
+}
+
+th{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.badge{
+  display:inline-flex;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.badge-debit{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.badge-credit{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.badge-category{
+  background:#e0e7ff;
+  color:#3730a3;
+}
+
+.action-btn{
+  padding:6px 8px;
+  font-size:11px;
+}
+
+.category-table td:first-child{
+  font-weight:750;
+}
+
+.progress{
+  height:10px;
+  background:#e5e7eb;
+  border-radius:30px;
+  overflow:hidden;
+  margin:8px 0 4px;
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  border-radius:30px;
+  background:linear-gradient(90deg,#2563eb,#22c55e);
+  transition:.3s;
+}
+
+.progress-red{
+  background:linear-gradient(90deg,#f97316,#dc2626);
+}
+
+.progress-green{
+  background:linear-gradient(90deg,#16a34a,#22c55e);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.mini{
+  padding:15px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:17px;
+}
+
+.mini strong{
+  display:block;
+  font-size:20px;
+  margin-top:5px;
+}
+
+.health{
+  margin-top:15px;
+  padding:16px;
+  border-radius:17px;
+  background:var(--card2);
+  border:1px solid var(--border);
+}
+
+.health-status{
+  font-size:20px;
+  font-weight:850;
+  margin-top:5px;
+}
+
+.note{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+
+.chart-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.chart-box{
+  position:relative;
+  height:330px;
+}
+
+.chart-box canvas{
+  width:100%!important;
+  height:100%!important;
+}
+
+.loan-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.loan-card{
+  padding:18px;
+  border-radius:18px;
+  background:var(--card2);
+  border:1px solid var(--border);
+}
+
+.loan-card h3{
+  margin:0 0 12px;
+}
+
+.loan-number{
+  font-size:23px;
+  font-weight:850;
+}
+
+.loan-info{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.65;
+}
+
+.loan-progress{
+  height:9px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:12px;
+}
+
+.loan-progress-bar{
+  height:100%;
+  background:#2563eb;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  z-index:1000;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-card{
+  width:min(650px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:var(--card);
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.3);
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.close{
+  background:var(--card2);
+  color:var(--text);
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+.form-group label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:750;
+}
+
+.empty{
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+}
+
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:25px;
+}
+
+@media(max-width:1050px){
+  .cards{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .transaction-form{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .transaction-form .wide{
+    grid-column:span 1;
+  }
+}
+
+@media(max-width:800px){
+  .hero-inner{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .hero-actions{
+    justify-content:flex-start;
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid,.chart-grid{
+    grid-template-columns:1fr;
+  }
+
+  .loan-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  main{
+    padding:0 10px;
+  }
+
+  .hero{
+    padding:23px 14px 75px;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .card{
+    padding:14px;
+    border-radius:17px;
+  }
+
+  .value{
+    font-size:19px;
+  }
+
+  .panel{
+    padding:16px;
+    border-radius:18px;
+  }
+
+  .transaction-form{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .transaction-form .wide{
+    grid-column:span 2;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+}
+
+@media(max-width:390px){
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .transaction-form{
+    grid-template-columns:1fr;
+  }
+
+  .transaction-form .wide{
+    grid-column:auto;
+  }
+}
+
+@media print{
+  .hero-actions,
+  .toolbar button,
+  .transaction-form,
+  .action-btn,
+  .modal,
+  .no-print{
+    display:none!important;
+  }
+
+  body{
+    background:white;
+  }
+
+  .hero{
+    padding-bottom:30px;
+  }
+
+  main{
+    margin:20px auto;
+  }
+
+  .panel,.card{
+    box-shadow:none;
+    break-inside:avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand">
+      <div class="logo">💰</div>
+      <div>
+        <h1>Family Finance</h1>
+        <div class="subtitle">Simple • Clear • In Control</div>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="hero-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+      <button class="hero-btn" onclick="openSettings()">⚙️ Settings</button>
+      <button class="hero-btn" onclick="printReport()">🖨️ PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- SUMMARY -->
+<section class="cards">
+
+  <div class="card">
+    <div>💵</div>
+    <div class="label">MONTHLY INCOME</div>
+    <div class="value blue" id="incomeTop">QAR 17,000.00</div>
+  </div>
+
+  <div class="card">
+    <div>💳</div>
+    <div class="label">TOTAL DEBIT</div>
+    <div class="value red" id="debitTop">QAR 0.00</div>
+  </div>
+
+  <div class="card">
+    <div>💚</div>
+    <div class="label">TOTAL CREDIT</div>
+    <div class="value green" id="creditTop">QAR 0.00</div>
+  </div>
+
+  <div class="card">
+    <div>💰</div>
+    <div class="label">CURRENT BALANCE</div>
+    <div class="value green" id="balanceTop">QAR 0.00</div>
+  </div>
+
+  <div class="card">
+    <div>🎯</div>
+    <div class="label">SAVINGS THIS MONTH</div>
+    <div class="value purple" id="savedTop">QAR 0.00</div>
+  </div>
+
+</section>
+
+<!-- TRANSACTION PANEL -->
+<section class="panel">
+
+  <h2>➕ Add Debit / Credit</h2>
+
+  <div class="transaction-form">
+
+    <div class="type-toggle">
+      <button id="debitBtn"
+              class="active-debit"
+              onclick="setTransactionType('debit')">
+        🔴 Debit
+      </button>
+
+      <button id="creditBtn"
+              onclick="setTransactionType('credit')">
+        🟢 Credit
+      </button>
+    </div>
+
+    <input
+      id="transactionDate"
+      type="date"
+      title="Transaction date">
+
+    <select id="transactionCategory">
+      <option value="">Select Category</option>
+    </select>
+
+    <input
+      id="transactionAmount"
+      type="number"
+      min="0"
+      step="0.01"
+      placeholder="Amount">
+
+    <input
+      id="transactionDescription"
+      class="wide"
+      type="text"
+      placeholder="Description / note">
+
+    <button
+      class="primary"
+      onclick="addTransaction()">
+      ➕ Add Transaction
+    </button>
+
+  </div>
+
+  <div class="toolbar">
+
+    <select id="transactionMonthFilter"
+            onchange="renderTransactions()">
+    </select>
+
+    <select id="transactionTypeFilter"
+            onchange="renderTransactions()">
+      <option value="all">All Transactions</option>
+      <option value="debit">Debit Only</option>
+      <option value="credit">Credit Only</option>
+    </select>
+
+    <select id="transactionCategoryFilter"
+            onchange="renderTransactions()">
+      <option value="all">All Categories</option>
+    </select>
+
+    <button class="soft" onclick="clearFilters()">
+      Clear Filters
+    </button>
+
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th class="no-print">Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="transactionTable"></tbody>
+    </table>
+  </div>
+
+</section>
+
+<!-- MONTHLY BUDGET -->
+<div class="grid">
+
+<section class="panel">
+
+  <h2>📊 Monthly Budget</h2>
+
+  <div class="toolbar">
+
+    <select id="monthSelect"
+            onchange="changeMonth()">
+    </select>
+
+    <button class="primary"
+            onclick="openIncomeModal()">
+      💵 Edit Income
+    </button>
+
+    <button class="soft"
+            onclick="resetMonth()">
+      🔄 Reset Month
+    </button>
+
+  </div>
+
+  <div class="table-wrap">
+
+    <table class="category-table">
+
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Target</th>
+          <th>Spent</th>
+          <th>Credit</th>
+          <th>Remaining</th>
+          <th>Balance</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+
+      <tbody id="categoryTable"></tbody>
+
+    </table>
+
+  </div>
+
+</section>
+
+<!-- SAVINGS -->
+<section class="panel">
+
+  <h2>🎯 Savings Progress</h2>
+
+  <div class="stats">
+
+    <div class="mini">
+      <span class="label">🚨 EMERGENCY FUND</span>
+      <strong class="green" id="emergencyTotal">
+        QAR 0.00
+      </strong>
+    </div>
+
+    <div class="mini">
+      <span class="label">💜 GENERAL SAVINGS</span>
+      <strong class="purple" id="generalSavingsTotal">
+        QAR 0.00
+      </strong>
+    </div>
+
+  </div>
+
+  <div style="margin-top:20px">
+
+    <div class="label">
+      Emergency Target
+    </div>
+
+    <div class="progress">
+      <div
+        class="progress-bar progress-green"
+        id="emergencyBar">
+      </div>
+    </div>
+
+    <div class="note"
+         id="emergencyPct">
+      0%
+    </div>
+
+  </div>
+
+  <div class="health">
+
+    <div class="label">BUDGET HEALTH</div>
+
+    <div
+      class="health-status"
+      id="health">
+      —
+    </div>
+
+    <div
+      class="note"
+      id="healthText">
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+
+<!-- CHARTS -->
+<section class="panel">
+
+  <h2>📈 Financial Charts</h2>
+
+  <div class="chart-grid">
+
+    <div>
+      <div class="label">MONTHLY CASH FLOW</div>
+      <div class="chart-box">
+        <canvas id="cashFlowChart"></canvas>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">CATEGORY SPENDING</div>
+      <div class="chart-box">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- LOANS -->
+<section class="panel">
+
+  <h2>💳 Loan Payoff Tracking</h2>
+
+  <div class="toolbar">
+    <button class="primary"
+            onclick="openLoanModal()">
+      ➕ Add / Edit Loan
+    </button>
+  </div>
+
+  <div class="loan-grid"
+       id="loanGrid">
+  </div>
+
+</section>
+
+<!-- MONTHLY OVERVIEW -->
+<section class="panel">
+
+  <h2>📅 Monthly Overview</h2>
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Income</th>
+          <th>Debit</th>
+          <th>Credit</th>
+          <th>Balance</th>
+          <th>Savings</th>
+          <th>Saving %</th>
+        </tr>
+      </thead>
+
+      <tbody id="overviewTable"></tbody>
+
+    </table>
+
+  </div>
+
+</section>
+
+<!-- BACKUP -->
+<section class="panel">
+
+  <h2>💾 Data Backup & Export</h2>
+
+  <p class="note">
+    Your finance data is stored locally in this browser.
+    Export a backup regularly so you can restore it on another
+    browser or computer.
+  </p>
+
+  <div class="toolbar">
+
+    <button class="primary"
+            onclick="exportJSON()">
+      📦 Export JSON Backup
+    </button>
+
+    <button class="soft"
+            onclick="document.getElementById('importFile').click()">
+      📥 Import JSON
+    </button>
+
+    <button class="green-btn"
+            onclick="exportCSV()">
+      📊 Export Excel / CSV
+    </button>
+
+    <button class="dark-btn"
+            onclick="printReport()">
+      🖨️ Print / Save PDF
+    </button>
+
+    <input
+      id="importFile"
+      type="file"
+      accept=".json"
+      style="display:none"
+      onchange="importJSON(event)">
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  💰 Family Finance Manager<br>
+  Local browser storage • Vercel-ready • No backend required
+</footer>
+
+<!-- INCOME MODAL -->
+<div class="modal" id="incomeModal">
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+
+      <h2>Edit Monthly Income</h2>
+
+      <button class="close"
+              onclick="closeModal('incomeModal')">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Month</label>
+        <select id="incomeMonth"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Income</label>
+        <input
+          id="incomeAmount"
+          type="number"
+          min="0"
+          step="0.01">
+      </div>
+
+    </div>
+
+    <br>
+
+    <button class="primary"
+            onclick="saveIncome()">
+      💾 Save Income
+    </button>
+
+  </div>
+
+</div>
+
+<!-- LOAN MODAL -->
+<div class="modal" id="loanModal">
+
+  <div class="modal-card">
+
+    <div class="modal-header">
+
+      <h2>Add / Edit Loan</h2>
+
+      <button class="close"
+              onclick="closeModal('loanModal')">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label>Loan Name</label>
+        <input
+          id="loanName"
+          placeholder="Loan 1">
+      </div>
+
+      <div class="form-group">
+        <label>Current Balance</label>
+        <input
+          id="loanBalance"
+          type="number"
+          min="0"
+          step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Payment</label>
+        <input
+          id="loanPayment"
+          type="number"
+          min="0"
+          step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label>Interest Rate %</label>
+        <input
+          id="loanInterest"
+          type="number"
+          min="0"
+          step="0.01">
+      </div>
+
+      <div class="form-group">
+        <label>Remaining Installments</label>
+        <input
+          id="loanMonths"
+          type="number"
+          min="0"
+          step="1">
+      </div>
+
+      <div class="form-group">
+        <label>Paid Installments</label>
+        <input
+          id="loanPaid"
+          type="number"
+          min="0"
+          step="1">
+      </div>
+
+      <div class="form-group">
+        <label>Next Payment Date</label>
+        <input
+          id="loanNextPayment"
+          type="date">
+      </div>
+
+    </div>
+
+    <br>
+
+    <button class="primary"
+            onclick="saveLoan()">
+      💾 Save Loan
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+/* ============================================================
+   FAMILY FINANCE MANAGER
+   Single-file application
+   ============================================================ */
+
+const STORAGE_KEY = "familyFinanceProV1";
+
+const DEFAULT_INCOME = 17000;
+
+const EMERGENCY_TARGET = 5000;
+
+const CATEGORIES = [
+
+  {
+    name:"Loan",
+    key:"loan",
+    icon:"🔴",
+    target:7088,
+    type:"debt"
+  },
+
+  {
+    name:"Maid Salary",
+    key:"maid",
+    icon:"🟠",
+    target:1250,
+    type:"family"
+  },
+
+  {
+    name:"Parents / Family",
+    key:"parents",
+    icon:"🟠",
+    target:2200,
+    type:"family"
+  },
+
+  {
+    name:"Kids Education",
+    key:"education",
+    icon:"🟢",
+    target:1916.67,
+    type:"future"
+  },
+
+  {
+    name:"Groceries",
+    key:"groceries",
+    icon:"🟡",
+    target:2500,
+    type:"essential"
+  },
+
+  {
+    name:"WiFi & Mobile",
+    key:"wifi",
+    icon:"🟡",
+    target:520,
+    type:"essential"
+  },
+
+  {
+    name:"Water & Electricity",
+    key:"utilities",
+    icon:"🟡",
+    target:400,
+    type:"essential"
+  },
+
+  {
+    name:"Outing & Shopping",
+    key:"outing",
+    icon:"🔵",
+    target:300,
+    type:"lifestyle"
+  },
+
+  {
+    name:"Emergency Fund",
+    key:"emergency",
+    icon:"🟢",
+    target:400,
+    type:"future"
+  },
+
+  {
+    name:"General Savings",
+    key:"savings",
+    icon:"🟣",
+    target:200,
+    type:"savings"
+  },
+
+  {
+    name:"Miscellaneous",
+    key:"misc",
+    icon:"🟣",
+    target:225.33,
+    type:"buffer"
+  }
+
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+let state = loadState();
+
+let transactionType = "debit";
+
+let editingLoanIndex = null;
+
+/* ============================================================
+   INITIAL STATE
+   ============================================================ */
+
+function createDefaultState(){
+
+  const months = {};
+
+  generateMonths().forEach(month=>{
+
+    months[month] = {
+      income:DEFAULT_INCOME,
+      targets:{}
+    };
+
+    CATEGORIES.forEach(cat=>{
+      months[month].targets[cat.key] = cat.target;
+    });
+
+  });
+
+  return {
+
+    months,
+
+    transactions:[],
+
+    loans:[
+
+      {
+        name:"Loan 1",
+        balance:51856.42,
+        payment:2377,
+        interest:5,
+        months:23,
+        paid:25,
+        nextPayment:"2026-09-30"
+      },
+
+      {
+        name:"Loan 2",
+        balance:125905.92,
+        payment:4711,
+        interest:0,
+        months:0,
+        paid:0,
+        nextPayment:""
+      }
+
+    ],
+
+    settings:{
+      theme:"light"
+    }
+
+  };
+
+}
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+
+function loadState(){
+
+  try{
+
+    const saved =
+      localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+
+      const parsed =
+        JSON.parse(saved);
+
+      const base =
+        createDefaultState();
+
+      return {
+        ...base,
+        ...parsed,
+        months:{
+          ...base.months,
+          ...(parsed.months || {})
+        },
+        transactions:
+          parsed.transactions || [],
+        loans:
+          parsed.loans || base.loans,
+        settings:{
+          ...base.settings,
+          ...(parsed.settings || {})
+        }
+      };
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+  return createDefaultState();
+
+}
+
+function saveState(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(state)
+  );
+
+}
+
+/* ============================================================
+   DATES / MONTHS
+   ============================================================ */
+
+function generateMonths(){
+
+  const result=[];
+
+  const date =
+    new Date(2026,0,1);
+
+  const end =
+    new Date(2035,11,1);
+
+  while(date<=end){
+
+    result.push(
+      date.getFullYear()+
+      "-"+
+      String(date.getMonth()+1).padStart(2,"0")
+    );
+
+    date.setMonth(
+      date.getMonth()+1
+    );
+
+  }
+
+  return result;
+
+}
+
+function formatMonth(month){
+
+  if(!month) return "";
+
+  return new Date(
+    month+"-01T00:00:00"
+  ).toLocaleDateString(
+    "en-QA",
+    {
+      month:"long",
+      year:"numeric"
+    }
+  );
+
+}
+
+function monthFromDate(date){
+
+  return date.substring(0,7);
+
+}
+
+function today(){
+
+  const d=new Date();
+
+  return d.toISOString().substring(0,10);
+
+}
+
+/* ============================================================
+   MONEY
+   ============================================================ */
+
+function money(value){
+
+  return "QAR "+
+    Number(value || 0)
+      .toLocaleString(
+        "en-QA",
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      );
+
+}
+
+/* ============================================================
+   INITIALIZE SELECTS
+   ============================================================ */
+
+function initialize(){
+
+  const months =
+    generateMonths();
+
+  const monthSelect =
+    document.getElementById("monthSelect");
+
+  const transactionMonthFilter =
+    document.getElementById(
+      "transactionMonthFilter"
+    );
+
+  const incomeMonth =
+    document.getElementById("incomeMonth");
+
+  months.forEach(month=>{
+
+    const option1 =
+      new Option(
+        formatMonth(month),
+        month
+      );
+
+    const option2 =
+      new Option(
+        formatMonth(month),
+        month
+      );
+
+    const option3 =
+      new Option(
+        formatMonth(month),
+        month
+      );
+
+    monthSelect.appendChild(option1);
+
+    transactionMonthFilter.appendChild(option2);
+
+    incomeMonth.appendChild(option3);
+
+  });
+
+  const currentMonth =
+    today().substring(0,7);
+
+  monthSelect.value =
+    state.months[currentMonth]
+      ? currentMonth
+      : months[0];
+
+  transactionMonthFilter.value =
+    monthSelect.value;
+
+  incomeMonth.value =
+    monthSelect.value;
+
+  populateCategorySelects();
+
+  document.getElementById(
+    "transactionDate"
+  ).value=today();
+
+  document.getElementById(
+    "transactionCategoryFilter"
+  ).innerHTML =
+    '<option value="all">All Categories</option>';
+
+  CATEGORIES.forEach(cat=>{
+
+    document.getElementById(
+      "transactionCategoryFilter"
+    ).add(
+      new Option(
+        cat.icon+" "+cat.name,
+        cat.key
+      )
+    );
+
+  });
+
+  applyTheme();
+
+  renderAll();
+
+}
+
+/* ============================================================
+   CATEGORY SELECTS
+   ============================================================ */
+
+function populateCategorySelects(){
+
+  const select =
+    document.getElementById(
+      "transactionCategory"
+    );
+
+  select.innerHTML =
+    '<option value="">Select Category</option>';
+
+  CATEGORIES.forEach(cat=>{
+
+    select.add(
+      new Option(
+        cat.icon+" "+cat.name,
+        cat.key
+      )
+    );
+
+  });
+
+}
+
+/* ============================================================
+   TRANSACTION TYPE
+   ============================================================ */
+
+function setTransactionType(type){
+
+  transactionType=type;
+
+  const debit =
+    document.getElementById("debitBtn");
+
+  const credit =
+    document.getElementById("creditBtn");
+
+  debit.className =
+    type==="debit"
+      ? "active-debit"
+      : "";
+
+  credit.className =
+    type==="credit"
+      ? "active-credit"
+      : "";
+
+}
+
+/* ============================================================
+   ADD TRANSACTION
+   ============================================================ */
+
+function addTransaction(){
+
+  const type =
+    transactionType;
+
+  const date =
+    document.getElementById(
+      "transactionDate"
+    ).value;
+
+  const category =
+    document.getElementById(
+      "transactionCategory"
+    ).value;
+
+  const amount =
+    Number(
+      document.getElementById(
+        "transactionAmount"
+      ).value
+    );
+
+  const description =
+    document.getElementById(
+      "transactionDescription"
+    ).value.trim();
+
+  if(!date){
+
+    alert("Please select a date.");
+
+    return;
+
+  }
+
+  if(!category){
+
+    alert("Please select a category.");
+
+    return;
+
+  }
+
+  if(!amount || amount<=0){
+
+    alert("Please enter a valid amount.");
+
+    return;
+
+  }
+
+  state.transactions.push({
+
+    id:
+      Date.now().toString()+
+      Math.random()
+        .toString(36)
+        .substring(2),
+
+    type,
+
+    date,
+
+    category,
+
+    amount,
+
+    description
+
+  });
+
+  saveState();
+
+  document.getElementById(
+    "transactionAmount"
+  ).value="";
+
+  document.getElementById(
+    "transactionDescription"
+  ).value="";
+
+  document.getElementById(
+    "transactionMonthFilter"
+  ).value =
+    monthFromDate(date);
+
+  renderAll();
+
+}
+
+/* ============================================================
+   DELETE TRANSACTION
+   ============================================================ */
+
+function deleteTransaction(id){
+
+  if(!confirm(
+    "Delete this transaction?"
+  )) return;
+
+  state.transactions =
+    state.transactions.filter(
+      t=>t.id!==id
+    );
+
+  saveState();
+
+  renderAll();
+
+}
+
+/* ============================================================
+   TRANSACTION FILTERS
+   ============================================================ */
+
+function clearFilters(){
+
+  document.getElementById(
+    "transactionTypeFilter"
+  ).value="all";
+
+  document.getElementById(
+    "transactionCategoryFilter"
+  ).value="all";
+
+  document.getElementById(
+    "transactionMonthFilter"
+  ).value =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  renderTransactions();
+
+}
+
+/* ============================================================
+   GET TRANSACTIONS
+   ============================================================ */
+
+function getMonthTransactions(month){
+
+  return state.transactions.filter(
+    t=>monthFromDate(t.date)===month
+  );
+
+}
+
+function getCategoryTotals(month){
+
+  const totals={};
+
+  CATEGORIES.forEach(cat=>{
+
+    totals[cat.key]={
+      debit:0,
+      credit:0
+    };
+
+  });
+
+  getMonthTransactions(month)
+    .forEach(t=>{
+
+      if(!totals[t.category]){
+
+        totals[t.category]={
+          debit:0,
+          credit:0
+        };
+
+      }
+
+      totals[t.category][t.type]
+        += Number(t.amount)||0;
+
+    });
+
+  return totals;
+
+}
+
+/* ============================================================
+   RENDER TRANSACTIONS
+   ============================================================ */
+
+function renderTransactions(){
+
+  const month =
+    document.getElementById(
+      "transactionMonthFilter"
+    ).value;
+
+  const type =
+    document.getElementById(
+      "transactionTypeFilter"
+    ).value;
+
+  const category =
+    document.getElementById(
+      "transactionCategoryFilter"
+    ).value;
+
+  let transactions =
+    getMonthTransactions(month);
+
+  if(type!=="all"){
+
+    transactions =
+      transactions.filter(
+        t=>t.type===type
+      );
+
+  }
+
+  if(category!=="all"){
+
+    transactions =
+      transactions.filter(
+        t=>t.category===category
+      );
+
+  }
+
+  transactions.sort(
+    (a,b)=>
+      b.date.localeCompare(a.date)
+  );
+
+  const tbody =
+    document.getElementById(
+      "transactionTable"
+    );
+
+  tbody.innerHTML="";
+
+  if(!transactions.length){
+
+    tbody.innerHTML=`
+      <tr>
+        <td colspan="6">
+          <div class="empty">
+            No transactions for this filter.
+          </div>
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+  transactions.forEach(t=>{
+
+    const cat =
+      CATEGORIES.find(
+        c=>c.key===t.category
+      );
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML=`
+
+      <td>${formatDate(t.date)}</td>
+
+      <td>
+        <span class="badge ${
+          t.type==="debit"
+            ? "badge-debit"
+            : "badge-credit"
+        }">
+          ${
+            t.type==="debit"
+              ? "Debit"
+              : "Credit"
+          }
+        </span>
+      </td>
+
+      <td>
+        <span class="badge badge-category">
+          ${cat ? cat.icon+" "+cat.name : t.category}
+        </span>
+      </td>
+
+      <td>
+        ${escapeHtml(t.description || "—")}
+      </td>
+
+      <td class="${
+        t.type==="debit"
+          ? "red"
+          : "green"
+      }">
+        ${money(t.amount)}
+      </td>
+
+      <td class="no-print">
+        <button
+          class="red-btn action-btn"
+          onclick="deleteTransaction('${t.id}')">
+          Delete
+        </button>
+      </td>
+
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+function formatDate(date){
+
+  return new Date(
+    date+"T00:00:00"
+  ).toLocaleDateString(
+    "en-QA",
+    {
+      day:"2-digit",
+      month:"short",
+      year:"numeric"
+    }
+  );
+
+}
+
+function escapeHtml(text){
+
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+/* ============================================================
+   MONTHLY CATEGORY TABLE
+   ============================================================ */
+
+function renderCategoryTable(){
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  if(!state.months[month]){
+
+    state.months[month]={
+      income:DEFAULT_INCOME,
+      targets:{}
+    };
+
+  }
+
+  CATEGORIES.forEach(cat=>{
+
+    if(
+      state.months[month]
+        .targets[cat.key]===undefined
+    ){
+
+      state.months[month]
+        .targets[cat.key]=cat.target;
+
+    }
+
+  });
+
+  const totals =
+    getCategoryTotals(month);
+
+  const tbody =
+    document.getElementById(
+      "categoryTable"
+    );
+
+  tbody.innerHTML="";
+
+  let totalTarget=0;
+  let totalSpent=0;
+  let totalCredit=0;
+
+  CATEGORIES.forEach(cat=>{
+
+    const target =
+      Number(
+        state.months[month]
+          .targets[cat.key]
+      ) || 0;
+
+    const spent =
+      totals[cat.key]?.debit || 0;
+
+    const credit =
+      totals[cat.key]?.credit || 0;
+
+    const remaining =
+      target-spent;
+
+    const balance =
+      target-spent+credit;
+
+    const progress =
+      target>0
+        ? Math.min(
+            100,
+            spent/target*100
+          )
+        : 0;
+
+    totalTarget += target;
+    totalSpent += spent;
+    totalCredit += credit;
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML=`
+
+      <td>
+        ${cat.icon} ${cat.name}
+      </td>
+
+      <td>
+        ${money(target)}
+      </td>
+
+      <td class="red">
+        ${money(spent)}
+      </td>
+
+      <td class="green">
+        ${money(credit)}
+      </td>
+
+      <td class="${
+        remaining<0 ? "red" : "green"
+      }">
+        ${money(remaining)}
+      </td>
+
+      <td class="${
+        balance<0 ? "red" : "green"
+      }">
+        ${money(balance)}
+      </td>
+
+      <td style="min-width:120px">
+
+        <div class="progress">
+
+          <div
+            class="progress-bar ${
+              progress>=100
+                ? "progress-red"
+                : ""
+            }"
+            style="width:${progress}%">
+          </div>
+
+        </div>
+
+        <div class="note">
+          ${progress.toFixed(0)}%
+        </div>
+
+      </td>
+
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+  const tr =
+    document.createElement("tr");
+
+  const totalRemaining =
+    totalTarget-totalSpent;
+
+  tr.innerHTML=`
+
+    <td>
+      <strong>TOTAL</strong>
+    </td>
+
+    <td>
+      <strong>${money(totalTarget)}</strong>
+    </td>
+
+    <td class="red">
+      <strong>${money(totalSpent)}</strong>
+    </td>
+
+    <td class="green">
+      <strong>${money(totalCredit)}</strong>
+    </td>
+
+    <td class="${
+      totalRemaining<0
+        ? "red"
+        : "green"
+    }">
+      <strong>
+        ${money(totalRemaining)}
+      </strong>
+    </td>
+
+    <td>
+      <strong>
+        ${money(
+          totalTarget-
+          totalSpent+
+          totalCredit
+        )}
+      </strong>
+    </td>
+
+    <td>—</td>
+
+  `;
+
+  tbody.appendChild(tr);
+
+}
+
+/* ============================================================
+   SUMMARY
+   ============================================================ */
+
+function renderSummary(){
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  const monthData =
+    state.months[month];
+
+  const income =
+    Number(
+      monthData.income
+    ) || 0;
+
+  const transactions =
+    getMonthTransactions(month);
+
+  const debit =
+    transactions
+      .filter(t=>t.type==="debit")
+      .reduce(
+        (sum,t)=>
+          sum+Number(t.amount),
+        0
+      );
+
+  const credit =
+    transactions
+      .filter(t=>t.type==="credit")
+      .reduce(
+        (sum,t)=>
+          sum+Number(t.amount),
+        0
+      );
+
+  const balance =
+    income+credit-debit;
+
+  const savings =
+    transactions
+      .filter(
+        t=>
+          t.type==="debit" &&
+          (
+            t.category==="savings" ||
+            t.category==="emergency"
+          )
+      )
+      .reduce(
+        (sum,t)=>
+          sum+Number(t.amount),
+        0
+      );
+
+  document.getElementById(
+    "incomeTop"
+  ).textContent =
+    money(income);
+
+  document.getElementById(
+    "debitTop"
+  ).textContent =
+    money(debit);
+
+  document.getElementById(
+    "creditTop"
+  ).textContent =
+    money(credit);
+
+  document.getElementById(
+    "balanceTop"
+  ).textContent =
+    money(balance);
+
+  document.getElementById(
+    "savedTop"
+  ).textContent =
+    money(savings);
+
+  renderHealth(
+    income,
+    debit,
+    credit,
+    balance
+  );
+
+}
+
+/* ============================================================
+   HEALTH
+   ============================================================ */
+
+function renderHealth(
+  income,
+  debit,
+  credit,
+  balance
+){
+
+  const health =
+    document.getElementById("health");
+
+  const text =
+    document.getElementById(
+      "healthText"
+    );
+
+  if(balance<0){
+
+    health.textContent =
+      "🔴 Over Budget";
+
+    health.className =
+      "health-status red";
+
+    text.textContent =
+      "Your debits are higher than your available income and credits.";
+
+  }
+  else if(
+    debit > income*0.9
+  ){
+
+    health.textContent =
+      "🟠 Watch Spending";
+
+    health.className =
+      "health-status orange";
+
+    text.textContent =
+      "More than 90% of monthly income has been allocated.";
+
+  }
+  else{
+
+    health.textContent =
+      "🟢 Healthy";
+
+    health.className =
+      "health-status green";
+
+    text.textContent =
+      "Your current month is within the available income.";
+
+  }
+
+}
+
+/* ============================================================
+   SAVINGS
+   ============================================================ */
+
+function renderSavings(){
+
+  let emergency=0;
+  let savings=0;
+
+  state.transactions.forEach(t=>{
+
+    if(
+      t.type!=="debit"
+    ) return;
+
+    if(t.category==="emergency"){
+
+      emergency +=
+        Number(t.amount)||0;
+
+    }
+
+    if(t.category==="savings"){
+
+      savings +=
+        Number(t.amount)||0;
+
+    }
+
+  });
+
+  document.getElementById(
+    "emergencyTotal"
+  ).textContent =
+    money(emergency);
+
+  document.getElementById(
+    "generalSavingsTotal"
+  ).textContent =
+    money(savings);
+
+  const pct =
+    Math.min(
+      100,
+      emergency/
+      EMERGENCY_TARGET*
+      100
+    );
+
+  document.getElementById(
+    "emergencyBar"
+  ).style.width =
+    pct+"%";
+
+  document.getElementById(
+    "emergencyPct"
+  ).textContent =
+    pct.toFixed(0)+
+    "% of QAR "+
+    EMERGENCY_TARGET+
+    " starter target";
+
+}
+
+/* ============================================================
+   MONTHLY OVERVIEW
+   ============================================================ */
+
+function renderOverview(){
+
+  const tbody =
+    document.getElementById(
+      "overviewTable"
+    );
+
+  tbody.innerHTML="";
+
+  generateMonths()
+    .forEach(month=>{
+
+      if(!state.months[month])
+        return;
+
+      const income =
+        Number(
+          state.months[month].income
+        ) || 0;
+
+      const transactions =
+        getMonthTransactions(month);
+
+      const debit =
+        transactions
+          .filter(t=>t.type==="debit")
+          .reduce(
+            (s,t)=>
+              s+Number(t.amount),
+            0
+          );
+
+      const credit =
+        transactions
+          .filter(t=>t.type==="credit")
+          .reduce(
+            (s,t)=>
+              s+Number(t.amount),
+            0
+          );
+
+      const balance =
+        income+credit-debit;
+
+      const savings =
+        transactions
+          .filter(
+            t=>
+              t.type==="debit" &&
+              (
+                t.category==="savings" ||
+                t.category==="emergency"
+              )
+          )
+          .reduce(
+            (s,t)=>
+              s+Number(t.amount),
+            0
+          );
+
+      const savingPct =
+        income>0
+          ? savings/income*100
+          : 0;
+
+      const tr =
+        document.createElement("tr");
+
+      tr.innerHTML=`
+
+        <td>
+          <b>${formatMonth(month)}</b>
+        </td>
+
+        <td>
+          ${money(income)}
+        </td>
+
+        <td class="red">
+          ${money(debit)}
+        </td>
+
+        <td class="green">
+          ${money(credit)}
+        </td>
+
+        <td class="${
+          balance<0
+            ? "red"
+            : "green"
+        }">
+          ${money(balance)}
+        </td>
+
+        <td class="purple">
+          ${money(savings)}
+        </td>
+
+        <td>
+          ${savingPct.toFixed(1)}%
+        </td>
+
+      `;
+
+      tbody.appendChild(tr);
+
+    });
+
+}
+
+/* ============================================================
+   MONTH CHANGE
+   ============================================================ */
+
+function changeMonth(){
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  document.getElementById(
+    "transactionMonthFilter"
+  ).value=month;
+
+  document.getElementById(
+    "incomeMonth"
+  ).value=month;
+
+  const income =
+    state.months[month]?.income ||
+    DEFAULT_INCOME;
+
+  document.getElementById(
+    "incomeAmount"
+  ).value=income;
+
+  renderAll();
+
+}
+
+/* ============================================================
+   INCOME
+   ============================================================ */
+
+function openIncomeModal(){
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  document.getElementById(
+    "incomeMonth"
+  ).value=month;
+
+  document.getElementById(
+    "incomeAmount"
+  ).value =
+    state.months[month].income;
+
+  document.getElementById(
+    "incomeModal"
+  ).classList.add("show");
+
+}
+
+function saveIncome(){
+
+  const month =
+    document.getElementById(
+      "incomeMonth"
+    ).value;
+
+  const income =
+    Number(
+      document.getElementById(
+        "incomeAmount"
+      ).value
+    );
+
+  if(income<0){
+
+    alert(
+      "Income cannot be negative."
+    );
+
+    return;
+
+  }
+
+  state.months[month].income =
+    income;
+
+  saveState();
+
+  closeModal("incomeModal");
+
+  if(
+    month ===
+    document.getElementById(
+      "monthSelect"
+    ).value
+  ){
+
+    renderAll();
+
+  }
+  else{
+
+    renderOverview();
+
+  }
+
+}
+
+/* ============================================================
+   RESET MONTH
+   ============================================================ */
+
+function resetMonth(){
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  if(!confirm(
+    "Reset targets and income for "+
+    formatMonth(month)+
+    "? Transactions will NOT be deleted."
+  )) return;
+
+  state.months[month]={
+    income:DEFAULT_INCOME,
+    targets:{}
+  };
+
+  CATEGORIES.forEach(cat=>{
+
+    state.months[month]
+      .targets[cat.key]=cat.target;
+
+  });
+
+  saveState();
+
+  renderAll();
+
+}
+
+/* ============================================================
+   LOANS
+   ============================================================ */
+
+function renderLoans(){
+
+  const container =
+    document.getElementById(
+      "loanGrid"
+    );
+
+  container.innerHTML="";
+
+  if(!state.loans.length){
+
+    container.innerHTML=`
+      <div class="empty">
+        No loans added.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  state.loans.forEach(
+    (loan,index)=>{
+
+      const paid =
+        Number(loan.paid)||0;
+
+      const remaining =
+        Number(loan.months)||0;
+
+      const total =
+        paid+remaining;
+
+      const progress =
+        total>0
+          ? Math.min(
+              100,
+              paid/total*100
+            )
+          : 0;
+
+      const tr =
+        document.createElement("div");
+
+      tr.className="loan-card";
+
+      tr.innerHTML=`
+
+        <h3>
+          🔴 ${escapeHtml(loan.name)}
+        </h3>
+
+        <div class="loan-number">
+          ${money(loan.balance)}
+        </div>
+
+        <div class="loan-info">
+
+          Monthly Payment:
+          <strong>${money(loan.payment)}</strong>
+
+          <br>
+
+          Interest:
+          <strong>
+            ${
+              loan.interest
+                ? loan.interest+"%"
+                : "Not set"
+            }
+          </strong>
+
+          <br>
+
+          Remaining Installments:
+          <strong>
+            ${
+              loan.months
+                ? loan.months
+                : "Not set"
+            }
+          </strong>
+
+          <br>
+
+          Paid Installments:
+          <strong>${loan.paid || 0}</strong>
+
+          <br>
+
+          Next Payment:
+          <strong>
+            ${
+              loan.nextPayment
+                ? formatDate(
+                    loan.nextPayment
+                  )
+                : "Not set"
+            }
+          </strong>
+
+        </div>
+
+        <div class="loan-progress">
+
+          <div
+            class="loan-progress-bar"
+            style="width:${progress}%">
+          </div>
+
+        </div>
+
+        <p class="note">
+          ${progress.toFixed(0)}% paid
+        </p>
+
+        <div class="toolbar no-print">
+
+          <button
+            class="soft"
+            onclick="editLoan(${index})">
+            ✏️ Edit
+          </button>
+
+          <button
+            class="red-btn"
+            onclick="deleteLoan(${index})">
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      `;
+
+      container.appendChild(tr);
+
+    }
+  );
+
+}
+
+function openLoanModal(){
+
+  editingLoanIndex=null;
+
+  document.getElementById(
+    "loanName"
+  ).value="";
+
+  document.getElementById(
+    "loanBalance"
+  ).value="";
+
+    document.getElementById(
+    "loanPayment"
+  ).value="";
+
+  document.getElementById(
+    "loanInterest"
+  ).value="";
+
+  document.getElementById(
+    "loanMonths"
+  ).value="";
+
+  document.getElementById(
+    "loanPaid"
+  ).value="";
+
+  document.getElementById(
+    "loanNextPayment"
+  ).value="";
+
+  document.getElementById(
+    "loanModal"
+  ).classList.add("show");
+
+}
+
+
+/* ============================================================
+   EDIT LOAN
+   ============================================================ */
+
+function editLoan(index){
+
+  const loan =
+    state.loans[index];
+
+  if(!loan) return;
+
+  editingLoanIndex=index;
+
+  document.getElementById(
+    "loanName"
+  ).value=loan.name || "";
+
+  document.getElementById(
+    "loanBalance"
+  ).value=loan.balance || 0;
+
+  document.getElementById(
+    "loanPayment"
+  ).value=loan.payment || 0;
+
+  document.getElementById(
+    "loanInterest"
+  ).value=loan.interest || 0;
+
+  document.getElementById(
+    "loanMonths"
+  ).value=loan.months || 0;
+
+  document.getElementById(
+    "loanPaid"
+  ).value=loan.paid || 0;
+
+  document.getElementById(
+    "loanNextPayment"
+  ).value=loan.nextPayment || "";
+
+  document.getElementById(
+    "loanModal"
+  ).classList.add("show");
+
+}
+
+
+/* ============================================================
+   SAVE LOAN
+   ============================================================ */
+
+function saveLoan(){
+
+  const name =
+    document.getElementById(
+      "loanName"
+    ).value.trim();
+
+  const balance =
+    Number(
+      document.getElementById(
+        "loanBalance"
+      ).value
+    ) || 0;
+
+  const payment =
+    Number(
+      document.getElementById(
+        "loanPayment"
+      ).value
+    ) || 0;
+
+  const interest =
+    Number(
+      document.getElementById(
+        "loanInterest"
+      ).value
+    ) || 0;
+
+  const months =
+    Number(
+      document.getElementById(
+        "loanMonths"
+      ).value
+    ) || 0;
+
+  const paid =
+    Number(
+      document.getElementById(
+        "loanPaid"
+      ).value
+    ) || 0;
+
+  const nextPayment =
+    document.getElementById(
+      "loanNextPayment"
+    ).value;
+
+  if(!name){
+
+    alert("Please enter a loan name.");
+
+    return;
+
+  }
+
+  if(balance<0){
+
+    alert(
+      "Loan balance cannot be negative."
+    );
+
+    return;
+
+  }
+
+  const loan={
+
+    name,
+    balance,
+    payment,
+    interest,
+    months,
+    paid,
+    nextPayment
+
+  };
+
+  if(editingLoanIndex===null){
+
+    state.loans.push(loan);
+
+  }
+  else{
+
+    state.loans[
+      editingLoanIndex
+    ]=loan;
+
+  }
+
+  saveState();
+
+  closeModal("loanModal");
+
+  editingLoanIndex=null;
+
+  renderLoans();
+
+}
+
+
+/* ============================================================
+   DELETE LOAN
+   ============================================================ */
+
+function deleteLoan(index){
+
+  const loan =
+    state.loans[index];
+
+  if(!loan) return;
+
+  if(!confirm(
+    `Delete "${loan.name}"?`
+  )) return;
+
+  state.loans.splice(
+    index,
+    1
+  );
+
+  saveState();
+
+  renderLoans();
+
+}
+
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+function closeModal(id){
+
+  const modal =
+    document.getElementById(id);
+
+  if(modal){
+
+    modal.classList.remove(
+      "show"
+    );
+
+  }
+
+}
+
+
+/* Close modal when clicking outside */
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    if(
+      event.target.classList.contains(
+        "modal"
+      )
+    ){
+
+      event.target.classList.remove(
+        "show"
+      );
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+function toggleDarkMode(){
+
+  state.settings.theme =
+    state.settings.theme==="dark"
+      ? "light"
+      : "dark";
+
+  saveState();
+
+  applyTheme();
+
+  drawCharts();
+
+}
+
+function applyTheme(){
+
+  document.documentElement
+    .setAttribute(
+      "data-theme",
+      state.settings.theme || "light"
+    );
+
+}
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+function openSettings(){
+
+  const current =
+    state.settings.theme==="dark"
+      ? "Dark"
+      : "Light";
+
+  const choice =
+    prompt(
+      "Finance Manager Settings\n\n"+
+      "Current theme: "+current+
+      "\n\nEnter:\n"+
+      "1 = Light mode\n"+
+      "2 = Dark mode"
+    );
+
+  if(choice==="1"){
+
+    state.settings.theme="light";
+
+  }
+  else if(choice==="2"){
+
+    state.settings.theme="dark";
+
+  }
+  else{
+
+    return;
+
+  }
+
+  saveState();
+
+  applyTheme();
+
+  drawCharts();
+
+}
+
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+
+let cashFlowChart = null;
+let categoryChart = null;
+
+
+/*
+  These charts use the native Canvas API.
+  No external chart library is required.
+*/
+
+function drawCharts(){
+
+  drawCashFlowChart();
+
+  drawCategoryChart();
+
+}
+
+
+/* ============================================================
+   CASH FLOW CHART
+   ============================================================ */
+
+function drawCashFlowChart(){
+
+  const canvas =
+    document.getElementById(
+      "cashFlowChart"
+    );
+
+  if(!canvas) return;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+  const width =
+    Math.max(
+      300,
+      rect.width
+    );
+
+  const height =
+    Math.max(
+      250,
+      rect.height
+    );
+
+  canvas.width =
+    width*dpr;
+
+  canvas.height =
+    height*dpr;
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+  ctx.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+  const months =
+    generateMonths()
+      .slice(0,12);
+
+  const values =
+    months.map(month=>{
+
+      const data =
+        state.months[month];
+
+      const transactions =
+        getMonthTransactions(month);
+
+      const debit =
+        transactions
+          .filter(t=>t.type==="debit")
+          .reduce(
+            (s,t)=>
+              s+Number(t.amount),
+            0
+          );
+
+      const credit =
+        transactions
+          .filter(t=>t.type==="credit")
+          .reduce(
+            (s,t)=>
+              s+Number(t.amount),
+            0
+          );
+
+      return {
+        income:
+          Number(data?.income)||0,
+        debit,
+        credit
+      };
+
+    });
+
+  const max =
+    Math.max(
+      100,
+      ...values.map(v=>
+        Math.max(
+          v.income,
+          v.debit,
+          v.credit
+        )
+      )
+    );
+
+  const padding={
+    top:25,
+    right:15,
+    bottom:55,
+    left:55
+  };
+
+  const chartWidth =
+    width-
+    padding.left-
+    padding.right;
+
+  const chartHeight =
+    height-
+    padding.top-
+    padding.bottom;
+
+  const styles =
+    getComputedStyle(
+      document.documentElement
+    );
+
+  const textColor =
+    styles.getPropertyValue(
+      "--muted"
+    );
+
+  const borderColor =
+    styles.getPropertyValue(
+      "--border"
+    );
+
+  /* Grid */
+
+  ctx.strokeStyle =
+    borderColor;
+
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=4;i++){
+
+    const y =
+      padding.top+
+      chartHeight-
+      (chartHeight/4)*i;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      padding.left,
+      y
+    );
+
+    ctx.lineTo(
+      width-padding.right,
+      y
+    );
+
+    ctx.stroke();
+
+    ctx.fillStyle =
+      textColor;
+
+    ctx.font="10px Arial";
+
+    const label =
+      Math.round(
+        max/4*i
+      );
+
+    ctx.fillText(
+      label.toLocaleString(),
+      5,
+      y+3
+    );
+
+  }
+
+  /* Bars */
+
+  const groupWidth =
+    chartWidth/months.length;
+
+  const barWidth =
+    Math.max(
+      4,
+      groupWidth/5
+    );
+
+  values.forEach(
+    (value,index)=>{
+
+      const x =
+        padding.left+
+        index*groupWidth+
+        groupWidth/2-
+        barWidth*1.5;
+
+      drawBar(
+        ctx,
+        x,
+        value.income,
+        max,
+        padding.top,
+        chartHeight,
+        barWidth,
+        "#2563eb"
+      );
+
+      drawBar(
+        ctx,
+        x+barWidth+2,
+        value.debit,
+        max,
+        padding.top,
+        chartHeight,
+        barWidth,
+        "#dc2626"
+      );
+
+      drawBar(
+        ctx,
+        x+(barWidth+2)*2,
+        value.credit,
+        max,
+        padding.top,
+        chartHeight,
+        barWidth,
+        "#16a34a"
+      );
+
+      ctx.fillStyle =
+        textColor;
+
+      ctx.font="9px Arial";
+
+      const label =
+        new Date(
+          months[index]+"-01T00:00:00"
+        ).toLocaleDateString(
+          "en",
+          {
+            month:"short"
+          }
+        );
+
+      ctx.textAlign="center";
+
+      ctx.fillText(
+        label,
+        padding.left+
+        index*groupWidth+
+        groupWidth/2,
+        height-25
+      );
+
+      ctx.textAlign="left";
+
+    }
+  );
+
+  /* Legend */
+
+  drawLegend(
+    ctx,
+    [
+      ["Income","#2563eb"],
+      ["Debit","#dc2626"],
+      ["Credit","#16a34a"]
+    ],
+    padding.left,
+    8
+  );
+
+}
+
+
+function drawBar(
+  ctx,
+  x,
+  value,
+  max,
+  top,
+  height,
+  width,
+  color
+){
+
+  const barHeight =
+    value/max*height;
+
+  const y =
+    top+
+    height-
+    barHeight;
+
+  ctx.fillStyle=color;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    x,
+    y,
+    width,
+    barHeight,
+    4
+  );
+
+  ctx.fill();
+
+}
+
+
+/* ============================================================
+   CATEGORY CHART
+   ============================================================ */
+
+function drawCategoryChart(){
+
+  const canvas =
+    document.getElementById(
+      "categoryChart"
+    );
+
+  if(!canvas) return;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+  const width =
+    Math.max(
+      300,
+      rect.width
+    );
+
+  const height =
+    Math.max(
+      250,
+      rect.height
+    );
+
+  canvas.width =
+    width*dpr;
+
+  canvas.height =
+    height*dpr;
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+  ctx.clearRect(
+    0,
+    0,
+    width,
+    height
+  );
+
+  const month =
+    document.getElementById(
+      "monthSelect"
+    ).value;
+
+  const totals =
+    getCategoryTotals(month);
+
+  const data =
+    CATEGORIES
+      .map(cat=>({
+
+        name:cat.name,
+
+        value:
+          totals[cat.key]?.debit || 0
+
+      }))
+      .filter(item=>
+        item.value>0
+      )
+      .sort(
+        (a,b)=>
+          b.value-a.value
+      )
+      .slice(0,8);
+
+  const total =
+    data.reduce(
+      (s,item)=>
+        s+item.value,
+      0
+    );
+
+  const styles =
+    getComputedStyle(
+      document.documentElement
+    );
+
+  const textColor =
+    styles.getPropertyValue(
+      "--text"
+    );
+
+  if(!data.length){
+
+    ctx.fillStyle =
+      styles.getPropertyValue(
+        "--muted"
+      );
+
+    ctx.font="14px Arial";
+
+    ctx.textAlign="center";
+
+    ctx.fillText(
+      "No spending data for this month",
+      width/2,
+      height/2
+    );
+
+    ctx.textAlign="left";
+
+    return;
+
+  }
+
+  const centerX =
+    width*0.32;
+
+  const centerY =
+    height*0.52;
+
+  const radius =
+    Math.min(
+      width*0.25,
+      height*0.32
+    );
+
+  const colors=[
+    "#2563eb",
+    "#dc2626",
+    "#16a34a",
+    "#f59e0b",
+    "#7c3aed",
+    "#0f766e",
+    "#ec4899",
+    "#64748b"
+  ];
+
+  let start =
+    -Math.PI/2;
+
+  data.forEach(
+    (item,index)=>{
+
+      const angle =
+        item.value/
+        total*
+        Math.PI*2;
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        centerX,
+        centerY
+      );
+
+      ctx.arc(
+        centerX,
+        centerY,
+        radius,
+        start,
+        start+angle
+      );
+
+      ctx.closePath();
+
+      ctx.fillStyle =
+        colors[index];
+
+      ctx.fill();
+
+      start+=angle;
+
+    }
+  );
+
+  /* Doughnut hole */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    centerX,
+    centerY,
+    radius*.58,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fillStyle =
+    styles.getPropertyValue(
+      "--card"
+    );
+
+  ctx.fill();
+
+  ctx.fillStyle=textColor;
+
+  ctx.font="bold 15px Arial";
+
+  ctx.textAlign="center";
+
+  ctx.fillText(
+    money(total),
+    centerX,
+    centerY+5
+  );
+
+  ctx.font="10px Arial";
+
+  ctx.fillStyle =
+    styles.getPropertyValue(
+      "--muted"
+    );
+
+  ctx.fillText(
+    "Total Debit",
+    centerX,
+    centerY+22
+  );
+
+  ctx.textAlign="left";
+
+  /* Legend */
+
+  const legendX =
+    width*0.57;
+
+  let legendY=45;
+
+  data.forEach(
+    (item,index)=>{
+
+      ctx.fillStyle =
+        colors[index];
+
+      ctx.fillRect(
+        legendX,
+        legendY-9,
+        11,
+        11
+      );
+
+      ctx.fillStyle=textColor;
+
+      ctx.font="11px Arial";
+
+      ctx.fillText(
+        item.name,
+        legendX+17,
+        legendY
+      );
+
+      ctx.fillStyle =
+        styles.getPropertyValue(
+          "--muted"
+        );
+
+      ctx.font="10px Arial";
+
+      ctx.fillText(
+        money(item.value),
+        legendX+17,
+        legendY+14
+      );
+
+      legendY+=39;
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   CHART LEGEND
+   ============================================================ */
+
+function drawLegend(
+  ctx,
+  items,
+  x,
+  y
+){
+
+  const styles =
+    getComputedStyle(
+      document.documentElement
+    );
+
+  const textColor =
+    styles.getPropertyValue(
+      "--text"
+    );
+
+  let currentX=x;
+
+  items.forEach(
+    item=>{
+
+      ctx.fillStyle=item[1];
+
+      ctx.fillRect(
+        currentX,
+        y,
+        10,
+        10
+      );
+
+      ctx.fillStyle=textColor;
+
+      ctx.font="10px Arial";
+
+      ctx.fillText(
+        item[0],
+        currentX+14,
+        y+9
+      );
+
+      currentX+=
+        item[0].length*6+
+        35;
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   EXPORT JSON
+   ============================================================ */
+
+function exportJSON(){
+
+  const data =
+    JSON.stringify(
+      state,
+      null,
+      2
+    );
+
+  downloadFile(
+    data,
+    "family-finance-backup-"+today()+".json",
+    "application/json"
+  );
+
+}
+
+
+/* ============================================================
+   IMPORT JSON
+   ============================================================ */
+
+function importJSON(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file) return;
+
+  const reader =
+    new FileReader();
+
+  reader.onload=function(e){
+
+    try{
+
+      const imported =
+        JSON.parse(
+          e.target.result
+        );
+
+      if(
+        !imported ||
+        typeof imported!=="object"
+      ){
+
+        throw new Error(
+          "Invalid file"
+        );
+
+      }
+
+      if(
+        !Array.isArray(
+          imported.transactions
+        )
+      ){
+
+        throw new Error(
+          "Invalid transactions data"
+        );
+
+      }
+
+      if(
+        !imported.months ||
+        typeof imported.months!=="object"
+      ){
+
+        throw new Error(
+          "Invalid monthly data"
+        );
+
+      }
+
+      if(!confirm(
+        "Import this backup?\n\n"+
+        "Your current browser data will be replaced."
+      )){
+
+        event.target.value="";
+
+        return;
+
+      }
+
+      const base =
+        createDefaultState();
+
+      state={
+        ...base,
+        ...imported,
+        settings:{
+          ...base.settings,
+          ...(imported.settings || {})
+        }
+      };
+
+      saveState();
+
+      location.reload();
+
+    }
+    catch(error){
+
+      console.error(error);
+
+      alert(
+        "Could not import this file.\n\n"+
+        "Please select a valid Family Finance JSON backup."
+      );
+
+    }
+
+    event.target.value="";
+
+  };
+
+  reader.readAsText(file);
+
+}
+
+
+/* ============================================================
+   CSV / EXCEL COMPATIBLE EXPORT
+   ============================================================ */
+
+function exportCSV(){
+
+  const rows=[
+
+    [
+      "Date",
+      "Type",
+      "Category",
+      "Description",
+      "Amount",
+      "Month"
+    ]
+
+  ];
+
+  state.transactions
+    .slice()
+    .sort(
+      (a,b)=>
+        a.date.localeCompare(b.date)
+    )
+    .forEach(t=>{
+
+      const cat =
+        CATEGORIES.find(
+          c=>c.key===t.category
+        );
+
+      rows.push([
+
+        t.date,
+
+        t.type,
+
+        cat
+          ? cat.name
+          : t.category,
+
+        t.description || "",
+
+        Number(t.amount)||0,
+
+        monthFromDate(t.date)
+
+      ]);
+
+    });
+
+  const csv =
+    rows
+      .map(row=>
+        row.map(csvEscape)
+           .join(",")
+      )
+      .join("\r\n");
+
+  /*
+    UTF-8 BOM makes the file open correctly
+    in Microsoft Excel.
+  */
+
+  const content =
+    "\uFEFF"+csv;
+
+  downloadFile(
+    content,
+    "family-finance-transactions-"+today()+".csv",
+    "text/csv;charset=utf-8"
+  );
+
+}
+
+function csvEscape(value){
+
+  const text =
+    String(value ?? "");
+
+  if(
+    text.includes(",") ||
+    text.includes('"') ||
+    text.includes("\n")
+  ){
+
+    return '"'+
+      text.replaceAll(
+        '"',
+        '""'
+      )+
+      '"';
+
+  }
+
+  return text;
+
+}
+
+
+/* ============================================================
+   DOWNLOAD HELPER
+   ============================================================ */
+
+function downloadFile(
+  content,
+  filename,
+  type
+){
+
+  const blob =
+    new Blob(
+      [content],
+      {type}
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  link.href=url;
+
+  link.download=filename;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
+
+  setTimeout(
+    ()=>{
+      URL.revokeObjectURL(url);
+    },
+    1000
+  );
+
+}
+
+
+/* ============================================================
+   PRINT / PDF
+   ============================================================ */
+
+function printReport(){
+
+  window.print();
+
+}
+
+
+/* ============================================================
+   RENDER EVERYTHING
+   ============================================================ */
+
+function renderAll(){
+
+  renderSummary();
+
+  renderCategoryTable();
+
+  renderTransactions();
+
+  renderSavings();
+
+  renderLoans();
+
+  renderOverview();
+
+  /*
+    Wait until the browser has painted the
+    layout so canvas dimensions are correct.
+  */
+
+  requestAnimationFrame(
+    ()=>{
+      drawCharts();
+    }
+  );
+
+}
+
+
+/* ============================================================
+   WINDOW RESIZE
+   ============================================================ */
+
+let resizeTimer;
+
+window.addEventListener(
+  "resize",
+  ()=>{
+
+    clearTimeout(
+      resizeTimer
+    );
+
+    resizeTimer =
+      setTimeout(
+        ()=>{
+          drawCharts();
+        },
+        150
+      );
+
+  }
+);
+
+
+/* ============================================================
+   KEEP INCOME MODAL SYNCHRONIZED
+   ============================================================ */
+
+document.getElementById(
+  "incomeMonth"
+).addEventListener(
+  "change",
+  function(){
+
+    const month=this.value;
+
+    document.getElementById(
+      "incomeAmount"
+    ).value =
+      state.months[month]?.income ||
+      0;
+
+  }
+);
+
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    /*
+      Escape closes any open modal.
+    */
+
+    if(event.key==="Escape"){
+
+      document
+        .querySelectorAll(".modal.show")
+        .forEach(modal=>{
+          modal.classList.remove(
+            "show"
+          );
+        });
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   START APPLICATION
+   ============================================================ */
+
+initialize();
+
+</script>
+
+</body>
+</html>
