@@ -279,7 +279,7 @@
         }
         th,
         td {
-            padding: 11px;
+            padding: 11px 8px;
             border-bottom: 1px solid var(--border);
             text-align: right;
             white-space: nowrap;
@@ -319,6 +319,31 @@
         }
         .category-table td:first-child {
             font-weight: 750;
+        }
+
+        /* Editable target input */
+        .target-input {
+            width: 100px;
+            min-height: 32px;
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--text);
+            font-size: 13px;
+            text-align: right;
+        }
+        .target-input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+        }
+        .target-save-btn {
+            padding: 4px 10px;
+            font-size: 11px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 8px;
+            margin-left: 4px;
         }
 
         /* ── progress ── */
@@ -558,6 +583,9 @@
             .loan-grid {
                 grid-template-columns: 1fr;
             }
+            .target-input {
+                width: 70px;
+            }
         }
         @media(max-width:600px) {
             main {
@@ -602,6 +630,9 @@
             }
             .income-editor input {
                 width: 100%;
+            }
+            .target-input {
+                width: 60px;
             }
         }
         @media(max-width:390px) {
@@ -703,7 +734,8 @@
                 <div class="income-editor" style="margin-top:0;">
                     <span class="label">Monthly Budget</span>
                     <span class="income-display" id="incomeDisplay">QAR 17,000.00</span>
-                    <input type="number" id="incomeInlineInput" min="0" step="0.01" placeholder="Enter amount" style="width:140px;">
+                    <input type="number" id="incomeInlineInput" min="0" step="0.01" placeholder="Enter amount"
+                    style="width:140px;">
                     <button class="primary save-btn" onclick="saveIncomeInline()">💾 Update</button>
                     <button class="soft save-btn" onclick="openIncomeModal()">✏️ Advanced</button>
                 </div>
@@ -975,22 +1007,22 @@
 
         // ─── CATEGORIES ────────────────────────────────────────────────
 
-        // Debit categories (expenses)
+        // Debit categories (expenses) with default targets
         const DEBIT_CATEGORIES = [
-            { name: "Loan", key: "loan", icon: "🔴", target: 7088, type: "debt" },
-            { name: "Maid Salary", key: "maid", icon: "🟠", target: 1250, type: "family" },
-            { name: "Parents / Family", key: "parents", icon: "🟠", target: 2200, type: "family" },
-            { name: "Kids Education", key: "education", icon: "🟢", target: 1916.67, type: "future" },
-            { name: "Groceries", key: "groceries", icon: "🟡", target: 2500, type: "essential" },
-            { name: "WiFi & Mobile", key: "wifi", icon: "🟡", target: 520, type: "essential" },
-            { name: "Water & Electricity", key: "utilities", icon: "🟡", target: 400, type: "essential" },
-            { name: "Outing & Shopping", key: "outing", icon: "🔵", target: 300, type: "lifestyle" },
-            { name: "Emergency Fund", key: "emergency", icon: "🟢", target: 400, type: "future" },
-            { name: "General Savings", key: "savings", icon: "🟣", target: 200, type: "savings" },
-            { name: "Miscellaneous", key: "misc", icon: "🟣", target: 225.33, type: "buffer" }
+            { name: "Loan", key: "loan", icon: "🔴", defaultTarget: 7088, type: "debt" },
+            { name: "Maid Salary", key: "maid", icon: "🟠", defaultTarget: 1250, type: "family" },
+            { name: "Parents / Family", key: "parents", icon: "🟠", defaultTarget: 2200, type: "family" },
+            { name: "Kids Education", key: "education", icon: "🟢", defaultTarget: 1916.67, type: "future" },
+            { name: "Groceries", key: "groceries", icon: "🟡", defaultTarget: 2500, type: "essential" },
+            { name: "WiFi & Mobile", key: "wifi", icon: "🟡", defaultTarget: 520, type: "essential" },
+            { name: "Water & Electricity", key: "utilities", icon: "🟡", defaultTarget: 400, type: "essential" },
+            { name: "Outing & Shopping", key: "outing", icon: "🔵", defaultTarget: 300, type: "lifestyle" },
+            { name: "Emergency Fund", key: "emergency", icon: "🟢", defaultTarget: 400, type: "future" },
+            { name: "General Savings", key: "savings", icon: "🟣", defaultTarget: 200, type: "savings" },
+            { name: "Miscellaneous", key: "misc", icon: "🟣", defaultTarget: 225.33, type: "buffer" }
         ];
 
-        // Credit categories (income sources) — NEW!
+        // Credit categories (income sources)
         const CREDIT_CATEGORIES = [
             { name: "Salary", key: "salary", icon: "💼" },
             { name: "Pocket Money", key: "pocket", icon: "👛" },
@@ -1022,7 +1054,7 @@
                     targets: {}
                 };
                 DEBIT_CATEGORIES.forEach(cat => {
-                    months[month].targets[cat.key] = cat.target;
+                    months[month].targets[cat.key] = cat.defaultTarget;
                 });
             });
             return {
@@ -1046,10 +1078,22 @@
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     const base = createDefaultState();
+                    // Ensure all categories have targets for all months
+                    const months = parsed.months || {};
+                    generateMonths().forEach(m => {
+                        if (!months[m]) {
+                            months[m] = { income: DEFAULT_INCOME, targets: {} };
+                        }
+                        DEBIT_CATEGORIES.forEach(cat => {
+                            if (months[m].targets[cat.key] === undefined) {
+                                months[m].targets[cat.key] = cat.defaultTarget;
+                            }
+                        });
+                    });
                     return {
                         ...base,
                         ...parsed,
-                        months: { ...base.months, ...(parsed.months || {}) },
+                        months,
                         transactions: parsed.transactions || [],
                         loans: parsed.loans || base.loans,
                         settings: { ...base.settings, ...(parsed.settings || {}) }
@@ -1264,16 +1308,17 @@
                 .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
         }
 
-        // ─── CATEGORY TABLE ──────────────────────────────────────────
+        // ─── CATEGORY TABLE (with editable targets) ─────────────────
 
         function renderCategoryTable() {
             const month = document.getElementById("monthSelect").value;
             if (!state.months[month]) {
                 state.months[month] = { income: DEFAULT_INCOME, targets: {} };
             }
+            // Ensure all categories have targets
             DEBIT_CATEGORIES.forEach(cat => {
                 if (state.months[month].targets[cat.key] === undefined) {
-                    state.months[month].targets[cat.key] = cat.target;
+                    state.months[month].targets[cat.key] = cat.defaultTarget;
                 }
             });
 
@@ -1300,7 +1345,12 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
               <td>${cat.icon} ${cat.name}</td>
-              <td>${money(target)}</td>
+              <td>
+                <input type="number" class="target-input" id="target_${cat.key}" 
+                       value="${target}" min="0" step="0.01" 
+                       onchange="updateTarget('${cat.key}', this.value)">
+                <button class="target-save-btn" onclick="updateTarget('${cat.key}', document.getElementById('target_${cat.key}').value)">Save</button>
+              </td>
               <td class="red">${money(spent)}</td>
               <td class="green">${money(credit)}</td>
               <td class="${remaining<0?"red":"green"}">${money(remaining)}</td>
@@ -1313,6 +1363,7 @@
                 tbody.appendChild(tr);
             });
 
+            // Total row
             const totalRemaining = totalTarget - totalSpent;
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -1325,6 +1376,28 @@
             <td>—</td>
           `;
             tbody.appendChild(tr);
+        }
+
+        // ─── UPDATE TARGET (editable) ───────────────────────────────
+
+        function updateTarget(categoryKey, value) {
+            const month = document.getElementById("monthSelect").value;
+            const newTarget = Number(value);
+            if (isNaN(newTarget) || newTarget < 0) {
+                alert("Please enter a valid positive number.");
+                // Revert to current value
+                const current = state.months[month]?.targets[categoryKey] || 0;
+                document.getElementById(`target_${categoryKey}`).value = current;
+                return;
+            }
+            if (!state.months[month]) {
+                state.months[month] = { income: DEFAULT_INCOME, targets: {} };
+            }
+            state.months[month].targets[categoryKey] = newTarget;
+            saveState();
+            renderCategoryTable();
+            renderSummary();
+            drawCharts();
         }
 
         // ─── SUMMARY ──────────────────────────────────────────────────
@@ -1485,7 +1558,7 @@
             if (!confirm("Reset targets and income for " + formatMonth(month) + "? Transactions will NOT be deleted."))
             return;
             state.months[month] = { income: DEFAULT_INCOME, targets: {} };
-            DEBIT_CATEGORIES.forEach(cat => { state.months[month].targets[cat.key] = cat.target; });
+            DEBIT_CATEGORIES.forEach(cat => { state.months[month].targets[cat.key] = cat.defaultTarget; });
             saveState();
             renderAll();
             updateIncomeInline();
